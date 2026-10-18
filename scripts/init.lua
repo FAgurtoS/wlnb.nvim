@@ -14,6 +14,22 @@ end
 vim.o.fillchars = 'eob: '
 vim.o.termguicolors = true
 vim.o.swapfile = false
+-- Kernel indicator in the status line (the plugin ships a component but no statusline of its own)
+function _G.WlnKernel()
+  local ok, _, hl_state = pcall(require('ipynb.kernel').statusline)
+  if not ok or not hl_state then
+    return ''
+  end
+  local labels = {
+    disconnected = 'kernel OFF (Space s to start)',
+    ready = 'kernel READY',
+    busy = 'kernel RUNNING...',
+  }
+  return labels[hl_state] or ''
+end
+vim.o.laststatus = 2
+vim.o.statusline = '%f %m%= %{v:lua.WlnKernel()} '
+
 vim.g.mapleader = ' '
 require('ipynb').setup({
   -- Easier keys for the try-it launcher: Space + one letter
