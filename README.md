@@ -52,8 +52,9 @@ Start the kernel before running cells; otherwise you get "No kernel connected". 
 variables between cells. Interrupt is implemented by killing and restarting the kernel, so
 variables are lost (a piped `WolframKernel` dies on SIGINT).
 
-On macOS, `Alt` keys only work if the terminal sends Option as Meta (Terminal.app: Settings,
-Profiles, Keyboard, "Use Option as Meta key").
+The `Alt` keymaps need the terminal to send Option as Alt, which on some keyboard layouts (e.g.
+Spanish) stops Option from typing `[ ] { } \\ |`. If that affects you, leave it off and use the
+Space keymaps and the `:Notebook...` commands instead.
 
 ## Images
 
