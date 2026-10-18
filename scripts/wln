@@ -5,4 +5,5 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 base="$root/tests/.nvim-test"
 export XDG_DATA_HOME="$base/share" XDG_STATE_HOME="$base/state" \
   XDG_CACHE_HOME="$base/cache" XDG_CONFIG_HOME="$base/config" NVIM_APPNAME=ipynb-test
+export PATH="$root/scripts/magick-shim:$PATH"  # stand-in for a broken ImageMagick
 exec nvim -u "$root/scripts/init.lua" "$@"

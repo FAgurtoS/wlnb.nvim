@@ -9,9 +9,10 @@ that edits plain-text `.wlnb` notebooks (agent-readable, git-friendly) and runs 
 
 ## Quick start
 
-Requirements: Neovim 0.10+, Wolfram Engine or Mathematica (`wolframscript`), Python 3, and
-`brew install tree-sitter-cli`. If you have no C compiler / Xcode command line tools, also
-`brew install zig` and put `scripts/zig-cc` first on `PATH` when the parser is first compiled.
+Requirements: Neovim 0.10+, Wolfram Engine or Mathematica (`wolframscript`) and Python 3.
+On macOS, everything else is in the [Brewfile](Brewfile): `brew bundle`. It installs
+`tree-sitter-cli`, `zig` (a C compiler for the parser if you have no Xcode command line tools;
+put `scripts/zig-cc` first on `PATH` when the parser is first compiled) and Ghostty.
 
 ```sh
 git clone <this repo> ~/wln.nvim

@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+"""Minimal stand-in for `magick identify` (PNG only), used when ImageMagick is unusable.
+
+snacks.nvim runs: magick identify -format "%m %[fx:w]x%[fx:h] %xx%y" "<file>[<page>]"
+and expects e.g. "PNG 864x533 72x72".
+"""
+import re
+import struct
+import sys
+
+args = sys.argv[1:]
+if not args or args[0] != "identify":
+    sys.exit("magick shim: only 'identify' on PNG files is supported")
+path = re.sub(r"\[\d*\]$", "", args[-1])
+try:
+    with open(path, "rb") as f:
+        head = f.read(24)
+except OSError as e:
+    sys.exit(f"magick shim: {e}")
+if head[:8] != b"\x89PNG\r\n\x1a\n":
+    sys.exit("magick shim: not a PNG")
+width, height = struct.unpack(">II", head[16:24])
+print(f"PNG {width}x{height} 72x72")
