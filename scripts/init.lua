@@ -6,6 +6,11 @@ local ts = vim.fn.stdpath('data') .. '/lazy/nvim-treesitter'
 if vim.fn.isdirectory(ts) == 1 then
   vim.opt.rtp:append(ts)
 end
+local snacks = vim.fn.stdpath('data') .. '/lazy/snacks.nvim'
+if vim.fn.isdirectory(snacks) == 1 then
+  vim.opt.rtp:append(snacks)
+  require('snacks').setup({ image = { enabled = true } })
+end
 vim.o.fillchars = 'eob: '
 vim.o.termguicolors = true
 vim.o.swapfile = false

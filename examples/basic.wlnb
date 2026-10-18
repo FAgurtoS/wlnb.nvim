@@ -7,10 +7,16 @@
 Integrate[Sin[x]^2, x]
 
 (* ::cell:: output *)
-(* x/2 - Sin[2 x]/4 *)
+(* x/2 - Sin[2*x]/4 *)
 
 (* ::cell:: input *)
 Table[n^2, {n, 5}]
 
 (* ::cell:: output *)
 (* {1, 4, 9, 16, 25} *)
+
+(* ::cell:: input *)
+Plot[x,{x,0,1}]
+
+(* ::cell:: output *)
+(* -Graphics- *)
