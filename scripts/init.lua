@@ -9,4 +9,5 @@ end
 vim.o.fillchars = 'eob: '
 vim.o.termguicolors = true
 vim.o.swapfile = false
+vim.g.mapleader = ' '
 require('ipynb').setup({})
