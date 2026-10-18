@@ -9,7 +9,7 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 - `input`: Wolfram code as-is.
 - `output`: belongs to the preceding `input`. Whole body wrapped in ONE comment
   `(* ... *)`, content in InputForm. Any `*)` inside is escaped as `*\)`.
-- `markdown`: each line prefixed with `(* ` ... ` *)`? NO: body wrapped in ONE comment.
+- `markdown`: body wrapped in ONE comment `(* ... *)`.
 - Optional header on line 1: `(* ::wlnb:: v0 *)`.
 - No ids, no absolute paths, no UI state.
 

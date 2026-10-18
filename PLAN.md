@@ -13,4 +13,4 @@ Status marks: [ ] todo, [x] done.
 - [ ] 6. Plots -> PNG via images.lua; TeXForm optional
 - [ ] 7. Optional: own wolframscript bridge, LSP, .wln <-> .wlnb converter
 
-Open: is wolframscript / Wolfram Jupyter kernel installed? (decides step 4)
+Env: wolframscript found at /usr/local/bin; `jupyter` NOT found -> step 4 likely needs own bridge (step 7 moves up).
