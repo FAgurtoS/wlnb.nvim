@@ -1,0 +1,8 @@
+#!/bin/sh
+# Open files with the fork's plugin loaded, using the parser built by the test suite.
+# Usage: scripts/wln examples/basic.wlnb
+root="$(cd "$(dirname "$0")/.." && pwd)"
+base="$root/tests/.nvim-test"
+export XDG_DATA_HOME="$base/share" XDG_STATE_HOME="$base/state" \
+  XDG_CACHE_HOME="$base/cache" XDG_CONFIG_HOME="$base/config" NVIM_APPNAME=ipynb-test
+exec nvim -u "$root/scripts/init.lua" "$@"
