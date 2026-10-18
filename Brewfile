@@ -7,7 +7,7 @@ brew "tree-sitter-cli"
 brew "zig"
 
 # Terminal with the kitty graphics protocol (inline plot images) and iTerm-like Cmd+D / Cmd+T shortcuts.
-# Needs `macos-option-as-alt = true` in ~/.config/ghostty/config for the Alt keymaps.
+# Needs `macos-option-as-alt = left` in ~/.config/ghostty/config for the Alt keymaps (`true` would break typing [ ] { } on Spanish keyboards).
 cask "ghostty"
 
 # Optional. Only needed by snacks.nvim for non-PNG images; scripts/magick-shim covers PNG
