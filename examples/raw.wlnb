@@ -1,7 +1,7 @@
 (* ::wlnb:: v0 *)
 
 (* ::cell:: raw *)
-Texto crudo que no se evalua ni se renderiza.
+Raw text: neither evaluated nor rendered.
 
 (* ::cell:: input *)
 x = 5;

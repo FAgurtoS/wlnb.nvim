@@ -1,7 +1,7 @@
 (* ::wlnb:: v0 *)
 
 (* ::cell:: markdown *)
-(* # Integrales *)
+(* # Integrals *)
 
 (* ::cell:: input *)
 Integrate[Sin[x]^2, x]
