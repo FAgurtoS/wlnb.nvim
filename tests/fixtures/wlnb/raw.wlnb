@@ -1,0 +1,13 @@
+(* ::wlnb:: v0 *)
+
+(* ::cell:: raw *)
+(* Raw text: neither evaluated nor rendered. *)
+
+(* ::cell:: input *)
+x = 5;
+
+(* ::cell:: input *)
+x^2
+
+(* ::cell:: output *)
+(* 25 *)

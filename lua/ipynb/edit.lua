@@ -902,6 +902,13 @@ function M.setup_edit_keymaps(state)
     require('ipynb.output').open_output_float(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output open' }))
 
+  vim.keymap.set('n', km.yank_output, function()
+    local edit = state.edit_state
+    if edit then
+      require('ipynb.output').yank_output(state, edit.cell_idx)
+    end
+  end, vim.tbl_extend('force', opts, { desc = 'Output copy' }))
+
   vim.keymap.set('n', km.clear_output, function()
     local edit = state.edit_state
     if edit then

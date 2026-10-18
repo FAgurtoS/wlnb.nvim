@@ -185,7 +185,7 @@ end
 ---Build plain text lines from cell outputs (for float buffer)
 ---@param cell table Cell with outputs
 ---@return string[] lines Plain text lines
-function M.build_output_text(cell)
+function M.build_output_text(cell, plain)
   local lines = {}
   local images_mod = require('ipynb.images')
 
@@ -213,7 +213,7 @@ function M.build_output_text(cell)
         local text = to_string(output.data['text/plain'])
         for i, line in ipairs(vim.split(text, '\n', { plain = true })) do
           if i == 1 then
-            table.insert(lines, 'Out: ' .. line)
+            table.insert(lines, (plain and '' or 'Out: ') .. line)
           else
             table.insert(lines, line)
           end
@@ -222,7 +222,7 @@ function M.build_output_text(cell)
         local inspected = vim.inspect(output.data)
         for i, line in ipairs(vim.split(inspected, '\n', { plain = true })) do
           if i == 1 then
-            table.insert(lines, 'Out: ' .. line)
+            table.insert(lines, (plain and '' or 'Out: ') .. line)
           else
             table.insert(lines, line)
           end
@@ -387,6 +387,30 @@ function M.render_all(state)
       M.render_outputs(state, i, false)  -- render images synchronously
     end
   end
+end
+
+---Copy a cell's text output to the clipboard (and the unnamed register)
+---@param state NotebookState
+---@param cell_idx number|nil Cell index (nil = current cell)
+function M.yank_output(state, cell_idx)
+  if not cell_idx then
+    local cursor_line = vim.api.nvim_win_get_cursor(0)[1] - 1
+    cell_idx = require('ipynb.cells').get_cell_at_line(state, cursor_line)
+  end
+  local cell = cell_idx and state.cells[cell_idx]
+  if not cell then
+    vim.notify('No cell at cursor', vim.log.levels.WARN)
+    return
+  end
+  local lines = M.build_output_text(cell, true)
+  if #lines == 0 then
+    vim.notify('No text output for this cell', vim.log.levels.INFO)
+    return
+  end
+  local text = table.concat(lines, '\n')
+  vim.fn.setreg('"', text)
+  pcall(vim.fn.setreg, '+', text)
+  vim.notify(('Output copied (%d lines)'):format(#lines), vim.log.levels.INFO)
 end
 
 ---Open cell output in a floating buffer for copying/inspection

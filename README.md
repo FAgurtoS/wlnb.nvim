@@ -45,7 +45,8 @@ Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell fo
 | Start kernel (about 9 s) | `Space` `s` |
 | Run cell | `Space` `r` |
 | Run cell and go to next | `Space` `R` |
-| Open output in a float (to copy) | `Space` `o` |
+| Copy output to the clipboard | `Space` `y` (`:NotebookYankOutput`) |
+| Open output in a float | `Space` `o` |
 | Interrupt / restart / shut down kernel | `Ctrl-c` / `:NotebookKernelRestart` / `:NotebookKernelShutdown` |
 
 Start the kernel before running cells; otherwise you get "No kernel connected". The kernel keeps
@@ -62,6 +63,8 @@ Plots are rendered to PNG by the kernel and shown as `-Graphics-` in the file. S
 needs [snacks.nvim](https://github.com/folke/snacks.nvim) (the launcher loads it from
 `tests/.nvim-test/share/ipynb-test/lazy/snacks.nvim` when present) and a terminal with the kitty
 graphics protocol: kitty, Ghostty or WezTerm. iTerm2 is not supported by snacks.nvim.
+
+Output is drawn as virtual lines, which Neovim cannot select; use the copy key above (or the float).
 
 ## Limitations
 

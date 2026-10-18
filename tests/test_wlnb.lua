@@ -1,4 +1,4 @@
--- .wlnb format tests: byte-identical round trip of examples, escaping, open/save in the plugin
+-- .wlnb format tests (fixtures in tests/fixtures/wlnb, kept apart from the editable examples/): byte-identical round trip, escaping, open/save in the plugin
 -- Run with: nvim --headless -u tests/minimal_init.lua -l tests/test_wlnb.lua
 
 local h = require('tests.helpers')
@@ -21,7 +21,7 @@ end
 
 for _, name in ipairs({ 'basic', 'plot', 'error', 'raw' }) do
   h.run_test('examples_roundtrip_byte_identical_' .. name, function()
-    local src = root .. '/examples/' .. name .. '.wlnb'
+    local src = root .. '/tests/fixtures/wlnb/' .. name .. '.wlnb'
     local cells = wlnb.read(src)
     local tmp = vim.fn.tempname() .. '.wlnb'
     wlnb.write(tmp, cells)
@@ -32,7 +32,7 @@ for _, name in ipairs({ 'basic', 'plot', 'error', 'raw' }) do
 end
 
 h.run_test('parse_maps_cell_types_and_outputs', function()
-  local cells = wlnb.read(root .. '/examples/basic.wlnb')
+  local cells = wlnb.read(root .. '/tests/fixtures/wlnb/basic.wlnb')
   h.assert_eq(#cells, 3, 'markdown + 2 inputs')
   h.assert_eq(cells[1].type, 'markdown')
   h.assert_eq(cells[1].source, '# Integrals')
@@ -63,7 +63,7 @@ end)
 
 h.run_test('open_and_save_in_plugin_keeps_file_identical', function()
   local tmp = vim.fn.tempname() .. '.wlnb'
-  vim.fn.writefile(vim.fn.readfile(root .. '/examples/basic.wlnb'), tmp)
+  vim.fn.writefile(vim.fn.readfile(root .. '/tests/fixtures/wlnb/basic.wlnb'), tmp)
   local before = read_bytes(tmp)
   h.open_notebook_path(tmp)
   vim.cmd('write')
@@ -71,6 +71,16 @@ h.run_test('open_and_save_in_plugin_keeps_file_identical', function()
   local after = read_bytes(tmp)
   vim.fn.delete(tmp)
   h.assert_true(before == after, 'file changed after open+save in the plugin')
+end)
+
+h.run_test('yank_output_copies_cell_output_to_register', function()
+  local tmp = vim.fn.tempname() .. '.wlnb'
+  vim.fn.writefile(vim.fn.readfile(root .. '/tests/fixtures/wlnb/basic.wlnb'), tmp)
+  local state = h.open_notebook_path(tmp)
+  vim.fn.setreg('"', '')
+  require('ipynb.output').yank_output(state, 2)
+  vim.fn.delete(tmp)
+  h.assert_eq(vim.fn.getreg('"'), 'x/2 - Sin[2 x]/4')
 end)
 
 local success = h.summary()

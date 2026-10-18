@@ -24,6 +24,7 @@ require('ipynb').setup({
     menu_execute_cell = '<leader>r',
     menu_execute_and_next = '<leader>R',
     open_output = '<leader>o',
+    yank_output = '<leader>y',
     make_markdown = '<leader>m',
     make_code = '<leader>c',
   },

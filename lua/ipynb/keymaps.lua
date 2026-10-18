@@ -203,6 +203,10 @@ function M.setup_facade_keymaps(state)
     require('ipynb.output').open_output_float(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output open' }))
 
+  vim.keymap.set('n', km.yank_output, function()
+    require('ipynb.output').yank_output(state)
+  end, vim.tbl_extend('force', opts, { desc = 'Output copy' }))
+
   vim.keymap.set('n', km.clear_output, function()
     M.clear_output(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output clear' }))
