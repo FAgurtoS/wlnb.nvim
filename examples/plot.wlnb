@@ -4,4 +4,4 @@
 Plot[Sin[x], {x, 0, 2 Pi}]
 
 (* ::cell:: output *)
-(* -Graphics- *)
+(* -Graphics- a3f9c1 *)

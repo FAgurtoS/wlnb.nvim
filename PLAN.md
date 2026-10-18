@@ -10,6 +10,7 @@ Status marks: [ ] todo, [x] done.
 - [ ] 3. Treesitter/highlight: wolfram injection for input cells (or reuse markers via cells.lua)
 - [ ] 4. Kernel: Wolfram Jupyter kernel via existing kernel_bridge.py. Check: 1+1 -> 2
 - [ ] 5. Outputs as InputForm (ToString[expr, InputForm]), stored in file, float to copy
+- [ ] 5b. Kernel control: interrupt, restart, shutdown (bridge must handle them; plugin already has :NotebookKernelInterrupt/Restart/Shutdown + keymaps). Restart marks all outputs [obsoleto]. Check: infinite loop is interrupted; after restart, x is undefined
 - [ ] 6. Plots -> PNG via images.lua; TeXForm optional
 - [ ] 7. Optional: own wolframscript bridge, LSP, .wln <-> .wlnb converter
 

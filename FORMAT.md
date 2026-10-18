@@ -14,9 +14,11 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 - No ids, no absolute paths, no UI state.
 
 ## Decisions
-- Images are NOT stored in the file. Plot outputs are written as `(* -Graphics- *)`.
-- Portable: PNGs are saved in `<notebook>.assets/` next to the file and ARE versioned/copied with it.
-- Cache file name = hash of the input cell code (`<notebook>.assets/<hash>.png`). On open, a `-Graphics-` marker shows the PNG if the assets folder has it, else plain text.
+- Images are NOT stored in the file. Plot outputs are written as `(* -Graphics- <hash> *)`.
+- Portable: PNGs live in `<notebook>.assets/<hash>.png` next to the file and are versioned/copied with it.
+- `<hash>` = hash of the cell code plus ALL previous input cells, in order (chained hash).
+- On open, the marker names the PNG; it is always shown. If the cell's current chained hash differs from `<hash>`, it is shown dimmed with an `[obsoleto]` label.
+- Orphan PNGs (referenced by no marker) are removed by a cleanup command.
 - Explicit exports (`Export[...]` in an input cell) are independent of this folder.
 - No cell ids: order is implicit (an `output` belongs to the `input` right above it).
   May be added later as an optional `id=` attribute without breaking old files.
