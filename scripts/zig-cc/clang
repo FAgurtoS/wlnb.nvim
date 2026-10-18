@@ -1,0 +1,13 @@
+#!/bin/sh
+# zig cc wrapper: drop cc-crate target/arch flags zig can't parse
+args=""
+skip=0
+for a in "$@"; do
+  if [ $skip = 1 ]; then skip=0; continue; fi
+  case "$a" in
+    --target=*|-mmacosx-version-min=*) ;;
+    -arch) skip=1 ;;
+    *) args="$args '$a'" ;;
+  esac
+done
+eval exec zig cc -target aarch64-macos $args

@@ -5,7 +5,7 @@ Rule: small steps, one check each, commit per step. Don't read edit.lua/words.lu
 Status marks: [ ] todo, [x] done.
 
 - [ ] 0. FORMAT.md + examples/*.wlnb (3-4 samples) agreed
-- [ ] 1. Boot: plugin loads under new name; `:e x.ipynb` still works
+- [x] 1. Baseline: all upstream tests pass in the fork (Lua module stays `ipynb` for now; rename deferred). No Xcode CLT on this Mac: build the parser with `PATH=$PWD/scripts/zig-cc:$PATH` (needs `brew install zig tree-sitter-cli`)
 - [ ] 2. io.lua: read_wlnb/write_wlnb + ftdetect. Check: open+save roundtrip is byte-identical
 - [ ] 3. Treesitter/highlight: wolfram injection for input cells (or reuse markers via cells.lua)
 - [ ] 4. Kernel: Wolfram Jupyter kernel via existing kernel_bridge.py. Check: 1+1 -> 2
