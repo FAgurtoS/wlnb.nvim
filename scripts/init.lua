@@ -10,4 +10,16 @@ vim.o.fillchars = 'eob: '
 vim.o.termguicolors = true
 vim.o.swapfile = false
 vim.g.mapleader = ' '
-require('ipynb').setup({})
+require('ipynb').setup({
+  -- Easier keys for the try-it launcher: Space + one letter
+  keymaps = {
+    add_cell_below = '<leader>b',
+    add_cell_above = '<leader>a',
+    kernel_start = '<leader>s',
+    menu_execute_cell = '<leader>r',
+    menu_execute_and_next = '<leader>R',
+    open_output = '<leader>o',
+    make_markdown = '<leader>m',
+    make_code = '<leader>c',
+  },
+})
