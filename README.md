@@ -1,4 +1,77 @@
-# 📘 `ipynb.nvim`
+# wln.nvim
+
+Wolfram Language notebooks in Neovim. A fork of [ajbucci/ipynb.nvim](https://github.com/ajbucci/ipynb.nvim)
+that edits plain-text `.wlnb` notebooks (agent-readable, git-friendly) and runs cells on a local
+`WolframKernel`. Outputs are saved as `InputForm` text, so they can be copied and pasted.
+
+> [!IMPORTANT]
+> Experimental. See [PLAN.md](PLAN.md) for status and [FORMAT.md](FORMAT.md) for the `.wlnb` format.
+
+## Quick start
+
+Requirements: Neovim 0.10+, Wolfram Engine or Mathematica (`wolframscript`), Python 3, and
+`brew install tree-sitter-cli`. If you have no C compiler / Xcode command line tools, also
+`brew install zig` and put `scripts/zig-cc` first on `PATH` when the parser is first compiled.
+
+```sh
+git clone <this repo> ~/wln.nvim
+cd ~/wln.nvim
+# first run only (compiles the parser, clones test dependencies into tests/.nvim-test):
+PATH=$PWD/scripts/zig-cc:$PATH nvim --headless -u tests/minimal_init.lua -l tests/run_all.lua
+# open a notebook with the plugin loaded:
+./scripts/wln examples/basic.wlnb
+```
+
+`scripts/wln` is a shell command (run it in a terminal, not from a file manager such as ranger,
+which would open the file with your normal Neovim without the plugin). It uses
+`scripts/init.lua`, which sets the leader key to **Space**.
+
+## Using a notebook
+
+Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell for editing
+(*Cell mode*), `Esc` returns to Notebook mode. `:w` saves the `.wlnb` file.
+
+| Action | Keys (launcher) |
+|---|---|
+| Next / previous cell | `]]` / `[[` |
+| Edit cell / leave cell | `i` or `Enter` / `Esc` |
+| New cell below / above | `Space` `b` / `Space` `a` |
+| Cut cell / paste below / paste above | `dd` / `p` / `P` |
+| Delete cell without copying | `:NotebookDeleteCell` |
+| Undo / redo | `u` / `Ctrl-r` |
+| Move cell down / up | `Alt-j` / `Alt-k` |
+| Make cell markdown / code | `Space` `m` / `Space` `c` |
+| Start kernel (about 9 s) | `Space` `s` |
+| Run cell | `Space` `r` |
+| Run cell and go to next | `Space` `R` |
+| Open output in a float (to copy) | `Space` `o` |
+| Interrupt / restart / shut down kernel | `Ctrl-c` / `:NotebookKernelRestart` / `:NotebookKernelShutdown` |
+
+Start the kernel before running cells; otherwise you get "No kernel connected". The kernel keeps
+variables between cells. Interrupt is implemented by killing and restarting the kernel, so
+variables are lost (a piped `WolframKernel` dies on SIGINT).
+
+On macOS, `Alt` keys only work if the terminal sends Option as Meta (Terminal.app: Settings,
+Profiles, Keyboard, "Use Option as Meta key").
+
+## Images
+
+Plots are rendered to PNG by the kernel and shown as `-Graphics-` in the file. Showing them inline
+needs [snacks.nvim](https://github.com/folke/snacks.nvim) (the launcher loads it from
+`tests/.nvim-test/share/ipynb-test/lazy/snacks.nvim` when present) and a terminal with the kitty
+graphics protocol: kitty, Ghostty or WezTerm. iTerm2 is not supported by snacks.nvim.
+
+## Limitations
+
+- No Wolfram syntax highlighting inside cells yet.
+- No completion, variable inspector or LSP for Wolfram.
+- Plot images are not yet persisted next to the notebook (planned: `<notebook>.assets/`).
+
+---
+
+# Upstream README (ipynb.nvim)
+
+## 📘 `ipynb.nvim`
 
 A modal Jupyter notebook editor for Neovim.
 
