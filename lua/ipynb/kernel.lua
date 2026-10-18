@@ -34,9 +34,13 @@ local function create_kernel_state()
 end
 
 -- Get the path to the Python bridge script
-local function get_bridge_path()
+---@param kernel_name string|nil
+local function get_bridge_path(kernel_name)
   local source = debug.getinfo(1, "S").source:sub(2)
   local plugin_dir = vim.fn.fnamemodify(source, ":h:h:h")
+  if kernel_name == "wolframscript" then
+    return plugin_dir .. "/python/wolfram_bridge.py"
+  end
   return plugin_dir .. "/python/kernel_bridge.py"
 end
 
@@ -418,7 +422,7 @@ function M.start_bridge(state, python_path)
 
   state.kernel = state.kernel or create_kernel_state()
 
-  local bridge_path = get_bridge_path()
+  local bridge_path = get_bridge_path(M.get_kernel_name(state))
   if vim.fn.filereadable(bridge_path) ~= 1 then
     vim.notify("Kernel bridge script not found: " .. bridge_path, vim.log.levels.ERROR)
     return false
