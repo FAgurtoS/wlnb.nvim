@@ -104,7 +104,7 @@ function M.setup(opts)
 
   -- Register autocmds for .ipynb files
   vim.api.nvim_create_autocmd('BufReadCmd', {
-    pattern = '*.ipynb',
+    pattern = { '*.ipynb', '*.wlnb' },
     group = vim.api.nvim_create_augroup('NotebookRead', { clear = true }),
     callback = function(args)
       -- Skip custom URI schemes (e.g., nb://test.ipynb used for picker previews)
@@ -116,7 +116,7 @@ function M.setup(opts)
   })
 
   vim.api.nvim_create_autocmd('BufWriteCmd', {
-    pattern = '*.ipynb',
+    pattern = { '*.ipynb', '*.wlnb' },
     group = vim.api.nvim_create_augroup('NotebookWrite', { clear = true }),
     callback = function(args)
       require('ipynb.io').save_notebook(args.buf, args.file)

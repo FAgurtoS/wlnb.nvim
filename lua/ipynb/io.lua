@@ -303,10 +303,17 @@ function M.open_notebook(buf, path)
   -- Check if file exists
   if vim.fn.filereadable(path) == 1 then
     -- Read existing notebook
-    cells, metadata, cell_ids = M.read_ipynb(path)
+    if path:match('%.wlnb$') then
+      cells, metadata, cell_ids = require('ipynb.wlnb').read(path)
+    else
+      cells, metadata, cell_ids = M.read_ipynb(path)
+    end
   else
     -- Create new empty notebook
     cells, metadata, cell_ids = M.create_empty_notebook()
+    if path:match('%.wlnb$') then
+      metadata = require('ipynb.wlnb').default_metadata()
+    end
     vim.notify('New notebook: ' .. vim.fn.fnamemodify(path, ':t'), vim.log.levels.INFO)
   end
 
@@ -364,7 +371,11 @@ function M.save_notebook(buf, path)
   cells_mod.place_markers(state)  -- Refresh extmarks after sync
 
   -- Write to file
-  M.write_ipynb(path, state.cells, state.metadata)
+  if path:match('%.wlnb$') then
+    require('ipynb.wlnb').write(path, state.cells)
+  else
+    M.write_ipynb(path, state.cells, state.metadata)
+  end
 
   -- Mark buffer as saved
   vim.bo[buf].modified = false

@@ -1,7 +1,7 @@
 (* ::wlnb:: v0 *)
 
 (* ::cell:: raw *)
-Raw text: neither evaluated nor rendered.
+(* Raw text: neither evaluated nor rendered. *)
 
 (* ::cell:: input *)
 x = 5;
