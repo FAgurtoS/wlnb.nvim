@@ -203,6 +203,10 @@ function M.setup_facade_keymaps(state)
     require('ipynb.output').open_output_float(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output open' }))
 
+  vim.keymap.set('n', km.output_panel, function()
+    require('ipynb.panel').toggle(state)
+  end, vim.tbl_extend('force', opts, { desc = 'Output panel toggle' }))
+
   vim.keymap.set('n', km.yank_output, function()
     require('ipynb.output').yank_output(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output copy' }))

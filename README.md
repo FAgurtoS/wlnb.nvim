@@ -45,6 +45,7 @@ Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell fo
 | Start kernel (about 9 s) | `Space` `s` |
 | Run cell | `Space` `r` |
 | Run cell and go to next | `Space` `R` |
+| Toggle output panel (selectable text) | `Space` `p` (`:NotebookOutputPanel`) |
 | Copy output to the clipboard | `Space` `y` (`:NotebookYankOutput`) |
 | Open output in a float | `Space` `o` |
 | Interrupt / restart / shut down kernel | `Ctrl-c` / `:NotebookKernelRestart` / `:NotebookKernelShutdown` |
@@ -64,7 +65,11 @@ needs [snacks.nvim](https://github.com/folke/snacks.nvim) (the launcher loads it
 `tests/.nvim-test/share/ipynb-test/lazy/snacks.nvim` when present) and a terminal with the kitty
 graphics protocol: kitty, Ghostty or WezTerm. iTerm2 is not supported by snacks.nvim.
 
-Output is drawn as virtual lines, which Neovim cannot select; use the copy key above (or the float).
+Output is drawn as virtual lines, which Neovim cannot select. To select it like any text, open the
+output panel (`Space` `p`): a split at the bottom with the current cell's output as a real buffer,
+that follows the cursor and updates after each run. Jump into it with `Ctrl-w j`, use `v`/`V`/`y`
+as usual, and close it with `q` (or `Space` `p` again). `Space` `y` copies the whole output without
+opening anything.
 
 ## Limitations
 

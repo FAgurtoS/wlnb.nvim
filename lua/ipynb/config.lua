@@ -42,6 +42,7 @@ local M = {}
 ---@field make_code string Make cell code (default: '<leader>ky')
 ---@field make_raw string Make cell raw (default: '<leader>kr')
 ---@field open_output string Open output in float (default: '<leader>ko')
+---@field output_panel string Toggle the output panel (default: '<leader>kp')
 ---@field yank_output string Copy cell output to the clipboard (default: '<leader>kY')
 ---@field clear_output string Clear cell output (default: '<leader>kc')
 ---@field clear_all_outputs string Clear all outputs (default: '<leader>kC')
@@ -139,6 +140,7 @@ M.defaults = {
 		make_raw = "<leader>kr",
 		open_output = "<leader>ko",
 		yank_output = "<leader>kY",
+		output_panel = "<leader>kp",
 		clear_output = "<leader>kc",
 		clear_all_outputs = "<leader>kC",
 		menu_execute_cell = "<leader>kx",

@@ -233,6 +233,10 @@ function M.setup_buffer(state)
     output.open_output_float(state)
   end, { desc = 'Open cell output in floating buffer' })
 
+  vim.api.nvim_buf_create_user_command(buf, 'NotebookOutputPanel', function()
+    require('ipynb.panel').toggle(state)
+  end, { desc = 'Toggle the output panel (selectable text)' })
+
   vim.api.nvim_buf_create_user_command(buf, 'NotebookYankOutput', function()
     output.yank_output(state)
   end, { desc = 'Copy current cell output to the clipboard' })

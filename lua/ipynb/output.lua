@@ -273,6 +273,9 @@ end
 ---@param cell_idx number
 ---@param skip_image_render boolean|nil Unused, kept for API compatibility
 function M.render_outputs(state, cell_idx, skip_image_render)
+  vim.schedule(function()
+    require('ipynb.panel').refresh(state)
+  end)
   local cell = state.cells[cell_idx]
   if not cell.outputs or #cell.outputs == 0 then
     return
@@ -362,6 +365,9 @@ function M.clear_outputs(state, cell_idx)
 
   cell.outputs = {}
   cell._stream_state = nil
+  vim.schedule(function()
+    require('ipynb.panel').refresh(state)
+  end)
 end
 
 ---Clear all outputs

@@ -902,6 +902,10 @@ function M.setup_edit_keymaps(state)
     require('ipynb.output').open_output_float(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output open' }))
 
+  vim.keymap.set('n', km.output_panel, function()
+    require('ipynb.panel').toggle(state)
+  end, vim.tbl_extend('force', opts, { desc = 'Output panel toggle' }))
+
   vim.keymap.set('n', km.yank_output, function()
     local edit = state.edit_state
     if edit then
