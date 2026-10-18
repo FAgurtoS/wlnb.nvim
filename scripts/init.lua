@@ -7,5 +7,6 @@ if vim.fn.isdirectory(ts) == 1 then
   vim.opt.rtp:append(ts)
 end
 vim.o.fillchars = 'eob: '
+vim.o.termguicolors = true
 vim.o.swapfile = false
 require('ipynb').setup({})
