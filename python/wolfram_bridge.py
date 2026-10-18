@@ -240,6 +240,15 @@ class WolframBridge:
 
 def main():
     bridge = WolframBridge()
+
+    def stop(_signum, _frame):
+        # Neovim ends the bridge with SIGTERM/SIGHUP: take the kernel down too, otherwise it
+        # lingers (it runs in its own session) and holds a Wolfram license slot.
+        bridge._kill()
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, stop)
+    signal.signal(signal.SIGHUP, stop)
     bridge.send_message({"type": "ready"})
     try:
         for line in sys.stdin:

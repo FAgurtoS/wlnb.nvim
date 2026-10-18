@@ -9,6 +9,8 @@ that edits plain-text `.wlnb` notebooks (agent-readable, git-friendly) and runs 
 
 ## Quick start
 
+The free Wolfram Engine license limits how many kernels can run at once; close notebooks you are not using.
+
 Requirements: Neovim 0.10+, Wolfram Engine or Mathematica (`wolframscript`) and Python 3.
 On macOS, everything else is in the [Brewfile](Brewfile): `brew bundle`. It installs
 `tree-sitter-cli`, `zig` (a C compiler for the parser if you have no Xcode command line tools;
@@ -71,9 +73,14 @@ that follows the cursor and updates after each run. Jump into it with `Ctrl-w j`
 as usual, and close it with `q` (or `Space` `p` again). `Space` `y` copies the whole output without
 opening anything.
 
+## Syntax highlighting
+
+Code cells are highlighted with the official
+[tree-sitter-wolfram](https://github.com/WolframResearch/tree-sitter-wolfram) grammar, vendored in
+`tree-sitter-wolfram/` (the parser compiles automatically the first time, like the cell parser).
+
 ## Limitations
 
-- No Wolfram syntax highlighting inside cells yet.
 - No completion, variable inspector or LSP for Wolfram.
 - Plot images are not yet persisted next to the notebook (planned: `<notebook>.assets/`).
 

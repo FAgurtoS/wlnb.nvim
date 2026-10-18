@@ -89,6 +89,43 @@ local function setup_treesitter()
   return false
 end
 
+---Register and (if needed) compile an extra tree-sitter parser bundled with the plugin
+---@param name string Language name (e.g. 'wolfram')
+---@param parser_dir string Directory with the grammar (src/) and queries/
+local function setup_bundled_parser(name, parser_dir)
+  if vim.fn.isdirectory(parser_dir) ~= 1 then
+    return
+  end
+  vim.opt.runtimepath:append(parser_dir)
+  if pcall(vim.treesitter.language.inspect, name) then
+    return
+  end
+  local ok, parsers = pcall(require, 'nvim-treesitter.parsers')
+  if not ok then
+    return
+  end
+  local install_info = { install_info = { path = parser_dir } }
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'TSUpdate',
+    callback = function()
+      require('nvim-treesitter.parsers')[name] = install_info
+    end,
+  })
+  parsers[name] = install_info
+  vim.defer_fn(function()
+    if not pcall(vim.treesitter.language.inspect, name) then
+      local install_ok, install_mod = pcall(require, 'nvim-treesitter.install')
+      if install_ok and install_mod.ensure_installed then
+        install_mod.ensure_installed(name)
+      elseif install_ok and install_mod.install then
+        install_mod.install(name)
+      else
+        vim.cmd('TSInstall! ' .. name)
+      end
+    end
+  end, 200)
+end
+
 ---Setup the notebook plugin
 ---@param opts NotebookConfig|nil Configuration overrides (see :help ipynb-config)
 function M.setup(opts)
@@ -98,6 +135,7 @@ function M.setup(opts)
 
   -- Setup treesitter parser (must be before highlights for proper TS integration)
   setup_treesitter()
+  setup_bundled_parser('wolfram', util.get_plugin_root() .. '/tree-sitter-wolfram')
 
   -- Setup highlights
   require('ipynb.visuals').setup_highlights()
