@@ -16,6 +16,9 @@ if vim.fn.executable('wolframscript') ~= 1 and vim.fn.executable('/usr/local/bin
 end
 
 local kernel = require('ipynb.kernel')
+local kernels = require('ipynb.kernels')
+local tmp_cache = vim.fn.tempname() .. '.json'
+kernels.cache_path = function() return tmp_cache end -- never touch the real cache
 local tmp = vim.fn.tempname() .. '.wlnb'
 vim.fn.writefile({
   '(* ::wlnb:: v0 *)',
@@ -59,6 +62,17 @@ h.run_test('wolfram_kernel_end_to_end', function()
   h.assert_true(vim.wait(60000, function()
     return state.kernel and state.kernel.connected
   end, 200), 'Wolfram kernel did not connect')
+
+  -- the bridge reports the license limit and the kernel shows up in the manager as ours
+  h.assert_true(vim.wait(5000, function() return kernels.get_max() ~= nil end, 100), 'license limit not reported')
+  h.assert_true(type(kernels.get_max()) == 'number', 'max should be a number')
+  local mine = false
+  for _, k in ipairs(kernels.list()) do
+    if k.state == state then
+      mine = true
+    end
+  end
+  h.assert_true(mine, 'kernel not listed as owned by this notebook')
 
   local t1 = run(1)
   h.assert_true(t1:find('hi') ~= nil and t1:find('25') ~= nil, 'cell 1 output: ' .. t1)

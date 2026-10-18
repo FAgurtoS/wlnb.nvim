@@ -9,7 +9,10 @@ that edits plain-text `.wlnb` notebooks (agent-readable, git-friendly) and runs 
 
 ## Quick start
 
-The free Wolfram Engine license limits how many kernels can run at once; close notebooks you are not using.
+The Wolfram Engine license limits how many kernels can run at once (2 on the free one; the limit is
+read from `$MaxLicenseProcesses` and cached). `:NotebookKernels` lists every `WolframKernel` process of
+your user, including those of other apps, with the count against the limit. When you start a kernel at
+the limit, you are asked which one to stop first.
 
 Requirements: Neovim 0.10+, Wolfram Engine or Mathematica (`wolframscript`) and Python 3.
 On macOS, everything else is in the [Brewfile](Brewfile): `brew bundle`. It installs
@@ -50,6 +53,7 @@ Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell fo
 | Toggle output panel (selectable text) | `Space` `p` (`:NotebookOutputPanel`) |
 | Copy output to the clipboard | `Space` `y` (`:NotebookYankOutput`) |
 | Open output in a float | `Space` `o` |
+| List running Wolfram kernels / stop one | `Space` `K` (`:NotebookKernels`; `x` stops, `r` refreshes, `q` closes) |
 | Interrupt / restart / shut down kernel | `Ctrl-c` / `:NotebookKernelRestart` / `:NotebookKernelShutdown` |
 
 Start the kernel before running cells; otherwise you get "No kernel connected". The kernel keeps

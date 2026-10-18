@@ -385,6 +385,7 @@ local tests = {
   join(root, 'tests/test_output_panel.lua'),
   join(root, 'tests/test_wolfram_highlight.lua'),
   join(root, 'tests/test_wolfram_kernel.lua'),
+  join(root, 'tests/test_kernels.lua'),
   join(root, 'tests/test_shadow.lua'),
   join(root, 'tests/test_lsp.lua'),
   join(root, 'tests/test_lsp_go.lua'),

@@ -336,6 +336,9 @@ local function handle_message(state, msg)
       kernel.callbacks.inspect[request_id] = nil
     end
 
+  elseif msg_type == "license" then
+    require("ipynb.kernels").set_max(msg.max)
+
   elseif msg_type == "pong" then
     if kernel.callbacks.ping then
       kernel.callbacks.ping()
@@ -554,6 +557,14 @@ function M.connect(state, opts)
 
   if state.kernel and state.kernel.connected then
     vim.notify('Kernel already running. Use :NotebookKernelRestart to restart.', vim.log.levels.WARN)
+    return true
+  end
+
+  -- Wolfram licenses cap concurrent kernels: offer to stop one when the limit is reached
+  if M.get_kernel_name(state) == "wolframscript" and not opts.slot_checked then
+    require("ipynb.kernels").ensure_slot(function()
+      M.connect(state, vim.tbl_extend("force", opts, { slot_checked = true }))
+    end)
     return true
   end
 

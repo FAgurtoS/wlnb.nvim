@@ -109,6 +109,7 @@ class WolframBridge:
         threading.Thread(target=self._reader, args=(self.proc, self.generation), daemon=True).start()
         self._write(FORMAT_CODE)
         self._write(INIT_CODE)
+        self._write('WriteString["stdout", "' + MARK + 'LICENSE@@" <> ToString[$MaxLicenseProcesses] <> "\\n"];')
         self._write('WriteString["stdout", "' + MARK + 'READY\\n"];')
         return True
 
@@ -159,6 +160,12 @@ class WolframBridge:
                 "type": "kernel_started", "kernel_name": getattr(self, "kernel_name", "wolframscript"),
                 "kernel_id": str(self.proc.pid) if self.proc else "unknown", "language": "wolfram",
             })
+            return
+        if kind == "LICENSE":
+            try:
+                self.send_message({"type": "license", "max": int(parts[1])})
+            except (IndexError, ValueError):
+                pass
             return
         tag = parts[1] if len(parts) > 1 else ""
         info = self.pending.get(tag)

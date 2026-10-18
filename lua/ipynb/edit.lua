@@ -902,6 +902,10 @@ function M.setup_edit_keymaps(state)
     require('ipynb.output').open_output_float(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output open' }))
 
+  vim.keymap.set('n', km.kernel_list, function()
+    require('ipynb.kernels').show()
+  end, vim.tbl_extend('force', opts, { desc = 'Kernels list' }))
+
   vim.keymap.set('n', km.output_panel, function()
     require('ipynb.panel').toggle(state)
   end, vim.tbl_extend('force', opts, { desc = 'Output panel toggle' }))

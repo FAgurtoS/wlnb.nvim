@@ -26,6 +26,7 @@ require('ipynb').setup({
     open_output = '<leader>o',
     yank_output = '<leader>y',
     output_panel = '<leader>p',
+    kernel_list = '<leader>K',
     make_markdown = '<leader>m',
     make_code = '<leader>c',
   },

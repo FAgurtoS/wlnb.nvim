@@ -334,6 +334,10 @@ end
 
 ---Setup global commands (called once during plugin setup)
 function M.setup()
+  vim.api.nvim_create_user_command('NotebookKernels', function()
+    require('ipynb.kernels').show()
+  end, { desc = 'List running Wolfram kernels and stop them (license limit)' })
+
   -- NotebookCreate - available globally to create new notebooks
   vim.api.nvim_create_user_command('NotebookCreate', function(opts)
     local path = opts.fargs[1] or ''
