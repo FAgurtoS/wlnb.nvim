@@ -1,0 +1,13 @@
+(* ::wlnb:: v0 *)
+
+(* ::cell:: input *)
+1/0
+
+(* ::cell:: output *)
+(* ComplexInfinity *)
+
+(* ::cell:: input *)
+Foo[1, 2
+
+(* ::cell:: output *)
+(* $Failed *)

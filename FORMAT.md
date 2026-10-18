@@ -15,9 +15,9 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 
 ## Decisions
 - Images are NOT stored in the file. Plot outputs are written as `(* -Graphics- *)`.
-- At run time the bridge renders PNGs to `.wlnb-cache/` next to the notebook (gitignored) for display only.
-- Cache file name = hash of the input cell code (`.wlnb-cache/<hash>.png`). On open, a `-Graphics-` marker shows the PNG if the cache has it, else plain text.
-- To keep an image, the user calls `Export[...]` in an input cell.
+- Portable: PNGs are saved in `<notebook>.assets/` next to the file and ARE versioned/copied with it.
+- Cache file name = hash of the input cell code (`<notebook>.assets/<hash>.png`). On open, a `-Graphics-` marker shows the PNG if the assets folder has it, else plain text.
+- Explicit exports (`Export[...]` in an input cell) are independent of this folder.
 - No cell ids: order is implicit (an `output` belongs to the `input` right above it).
   May be added later as an optional `id=` attribute without breaking old files.
 

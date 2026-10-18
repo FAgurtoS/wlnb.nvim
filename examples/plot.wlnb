@@ -1,0 +1,7 @@
+(* ::wlnb:: v0 *)
+
+(* ::cell:: input *)
+Plot[Sin[x], {x, 0, 2 Pi}]
+
+(* ::cell:: output *)
+(* -Graphics- *)
