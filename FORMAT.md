@@ -13,6 +13,12 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 - Optional header on line 1: `(* ::wlnb:: v0 *)`.
 - No ids, no absolute paths, no UI state.
 
+## Decisions
+- Images are NOT stored in the file. Plot outputs are written as `(* -Graphics- *)`.
+- At run time the bridge renders PNGs to `.wlnb-cache/` next to the notebook (gitignored) for display only.
+- To keep an image, the user calls `Export[...]` in an input cell.
+- No cell ids: order is implicit (an `output` belongs to the `input` right above it).
+  May be added later as an optional `id=` attribute without breaking old files.
+
 ## Open questions
-- Output images: sidecar file `name.assets/<n>.png` referenced by `(* ::image:: path *)`.
 - Metadata (kernel, version): only in header.
