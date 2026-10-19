@@ -348,6 +348,17 @@ function M.setup()
     require('ipynb.kernels').show()
   end, { desc = 'List running Wolfram kernels and stop them (license limit)' })
 
+  -- WLJS .wln <-> .wlnb (the other file gets the other extension unless a destination is given)
+  vim.api.nvim_create_user_command('NotebookConvert', function(opts)
+    local src = vim.fn.expand(opts.fargs[1] or '%:p')
+    local dest, err = require('ipynb.wln').convert(src, opts.fargs[2] and vim.fn.expand(opts.fargs[2]) or nil)
+    if dest then
+      vim.notify('Wrote ' .. dest)
+    else
+      vim.notify('NotebookConvert: ' .. tostring(err), vim.log.levels.ERROR)
+    end
+  end, { nargs = '*', complete = 'file', desc = 'Convert a WLJS .wln notebook to .wlnb or back' })
+
   -- NotebookCreate - available globally to create new notebooks
   vim.api.nvim_create_user_command('NotebookCreate', function(opts)
     local path = opts.fargs[1] or ''

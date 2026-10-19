@@ -49,6 +49,20 @@ The parser compiles on first load; the first open may print a tree-sitter error,
 A status line component is available as `require('ipynb.kernels').status()` (returns text and a
 highlight group). Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
+## Converting WLJS notebooks
+
+```sh
+scripts/wln-convert notebook.wln            # -> notebook.wlnb
+scripts/wln-convert notebook.wlnb out.wln   # -> WLJS text format
+```
+
+or `:NotebookConvert [source] [destination]` inside Neovim. Both WLJS flavours are read: the text one
+directly, and the older association dump through a one-shot `WolframKernel` (it needs a free license
+slot). Markdown cells stay markdown, other WLJS cells (`.html`, `.js`, `.slide`, ...) become `raw`
+cells, and text outputs (`codemirror` and `print` displays) are kept as InputForm text with the
+editor's box markers removed. Rendered outputs (html, graphics, ...) are dropped: run the cells again.
+Writing `.wln` saves inputs only.
+
 ## Using a notebook
 
 Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell for editing

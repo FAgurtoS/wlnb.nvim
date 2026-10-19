@@ -12,6 +12,7 @@ Status marks: [ ] todo, [x] done.
 - [~] 5. (text part done: results saved as InputForm in the .wlnb; image PNG shown via execute_result image/png but not persisted yet) Outputs as InputForm (ToString[expr, InputForm]), stored in file, float to copy
 - [x] 5b. Kernel control: interrupt, restart, shutdown (bridge must handle them; plugin already has :NotebookKernelInterrupt/Restart/Shutdown + keymaps). Restart marks all outputs [stale]. Check: infinite loop is interrupted; after restart, x is undefined
 - [x] 6. Plots -> PNG via images.lua; TeXForm optional
-- [ ] 7. Optional: own wolframscript bridge, LSP, .wln <-> .wlnb converter
+- [x] 7a. .wln <-> .wlnb converter (text and legacy flavours; .nb still open)
+- [ ] 7. Optional: WSTP interrupt, .nb converter, LSP completion
 
 Env: wolframscript found at /usr/local/bin; `jupyter` NOT found -> step 4 likely needs own bridge (step 7 moves up).
