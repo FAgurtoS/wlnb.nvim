@@ -315,6 +315,11 @@ function M.render_outputs(state, cell_idx, skip_image_render)
     if has_image and images_mod.supports_placeholders() then
       -- Get image placeholder lines for true interleaving
       image_index = image_index + 1
+      local text = output.data and output.data['text/plain']
+      if output.output_type == 'execute_result' and type(text) == 'string'
+        and not text:match('^%-Graphics%-') and not text:match('^%-Image%-') then
+        table.insert(virt_lines, { { 'Out:', 'IpynbOutput' } }) -- rendered math keeps its Out: label
+      end
       local img_lines, _ = images_mod.get_image_virt_lines(state, cell, output, image_index)
       if img_lines then
         for _, line in ipairs(img_lines) do

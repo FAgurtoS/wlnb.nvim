@@ -90,7 +90,7 @@ Code cells are highlighted with the official
 ## Limitations
 
 - No completion, variable inspector or LSP for Wolfram.
-- Structured results (fractions, roots, integrals, matrices...) are shown as a rendered StandardForm image; `Space o` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLN_RENDER_MATH=0` to turn rendering off.
+- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `Space o` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLN_RENDER_MATH=0` to turn rendering off.
 - Plot images are saved on `:w` to `<notebook>.assets/<hash>.png` and the file holds only `(* -Graphics- <hash> *)`. Copy the `.assets` folder together with the notebook. If the code above a plot changed since it ran, the output shows `[stale]`. `:NotebookCleanAssets` deletes PNGs no marker references (run it after saving).
 
 ---
