@@ -37,6 +37,9 @@ vim.fn.writefile({
   '',
   '(* ::cell:: input *)',
   'Range[3]',
+  '',
+  '(* ::cell:: input *)',
+  'NotebookDirectory[]',
 }, tmp)
 -- One sequential test: run_test closes all notebooks between tests, and the kernel is slow to start.
 local function output_text(cell)
@@ -104,6 +107,10 @@ h.run_test('wolfram_kernel_end_to_end', function()
   h.assert_true(t5:find('Sqrt[a^2 + b^2]', 1, true) ~= nil, 'InputForm text kept: ' .. t5)
   run(5)
   h.assert_true(state.cells[5].outputs[1].data['image/png'] ~= nil, 'lists are rendered too')
+
+  -- WLJS-style NotebookDirectory[] works and points at the notebook's folder
+  local t6 = run(6)
+  h.assert_true(t6:find(vim.fn.fnamemodify(tmp, ':p:h'), 1, true) ~= nil, 'NotebookDirectory[]: ' .. t6)
 
   -- closing the notebook must stop its kernel (it would hold a license slot otherwise)
   local pid

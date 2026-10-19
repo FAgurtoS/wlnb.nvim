@@ -49,6 +49,8 @@ The parser compiles on first load; the first open may print a tree-sitter error,
 A status line component is available as `require('ipynb.kernels').status()` (returns text and a
 highlight group). Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
+`NotebookDirectory[]` works in cells (it returns the notebook's folder), so notebooks written for WLJS or Mathematica that build file paths from it run unchanged.
+
 ## Performance with long expressions
 
 Syntax colors are skipped for cells with a line longer than 1200 characters or more than 60,000

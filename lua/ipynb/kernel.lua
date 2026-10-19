@@ -584,6 +584,7 @@ function M.connect(state, opts)
       send_command(state, {
         action = "start",
         kernel_name = kernel_name,
+        notebook_dir = state.source_path and vim.fn.fnamemodify(state.source_path, ":p:h") or nil,
       })
     end
   end, 100)

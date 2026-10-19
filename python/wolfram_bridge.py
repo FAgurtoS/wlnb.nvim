@@ -99,6 +99,7 @@ class WolframBridge:
     def __init__(self):
         self.proc: Optional[subprocess.Popen] = None
         self.kernel_path: Optional[str] = None
+        self.notebook_dir: Optional[str] = None
         self.execution_count = 0
         self.pending: Dict[str, Dict[str, Any]] = {}  # tag -> {cell_id}
         self.lock = threading.Lock()
@@ -122,6 +123,11 @@ class WolframBridge:
         threading.Thread(target=self._reader, args=(self.proc, self.generation), daemon=True).start()
         self._write(FORMAT_CODE)
         self._write(INIT_CODE)
+        if self.notebook_dir:
+            # WLJS and Mathematica notebooks use NotebookDirectory[]; a plain kernel has no notebook
+            directory = json.dumps(self.notebook_dir.rstrip("/") + "/")
+            self._write("Unprotect[NotebookDirectory]; NotebookDirectory[] := " + directory + "; "
+                        "Protect[NotebookDirectory];")
         self._write('WriteString["stdout", "' + MARK + 'LICENSE@@" <> ToString[$MaxLicenseProcesses] <> "\\n"];')
         self._write('WriteString["stdout", "' + MARK + 'READY\\n"];')
         return True
@@ -131,8 +137,9 @@ class WolframBridge:
             self.proc.stdin.write((text + "\n").encode("utf-8"))
             self.proc.stdin.flush()
 
-    def start_kernel(self, kernel_name: str = "wolframscript"):
+    def start_kernel(self, kernel_name: str = "wolframscript", notebook_dir: Optional[str] = None):
         self.kernel_name = kernel_name
+        self.notebook_dir = notebook_dir
         self._spawn()
 
     def _stream(self, tag: Optional[str], text: str):
@@ -282,7 +289,7 @@ def main():
                 continue
             action = cmd.get("action", "")
             if action == "start":
-                bridge.start_kernel(cmd.get("kernel_name", "wolframscript"))
+                bridge.start_kernel(cmd.get("kernel_name", "wolframscript"), cmd.get("notebook_dir"))
             elif action == "execute":
                 cell_id = cmd.get("cell_id")
                 if not isinstance(cell_id, str) or not cell_id:
