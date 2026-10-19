@@ -13,7 +13,7 @@ Status marks: [ ] todo, [x] done.
 - [x] 5b. Kernel control: interrupt, restart, shutdown (bridge must handle them; plugin already has :NotebookKernelInterrupt/Restart/Shutdown + keymaps). Restart marks all outputs [stale]. Check: infinite loop is interrupted; after restart, x is undefined
 - [x] 6. Plots -> PNG via images.lua; TeXForm optional
 - [x] 7a. .wln <-> .wlnb converter (text and legacy flavours; .nb still open)
-- [x] 7c. PDF/.wl export (:NotebookExport, ,e), images embedded in the .wlnb (format v1)
+- [x] 7c. PDF/.wl export (:NotebookExport, ,e), images in a .wlnbi sidecar next to the .wlnb (format v1; 'embedded' mode optional)
 - [x] 7b. Symbol completion (in-process LSP, data/wolfram_symbols.json), agent skill + wlnb-agent
 - [ ] 7. Optional: WSTP interrupt, .nb converter, completion of user definitions
 

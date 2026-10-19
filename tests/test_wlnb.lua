@@ -83,7 +83,7 @@ h.run_test('yank_output_copies_cell_output_to_register', function()
   h.assert_eq(vim.fn.getreg('"'), 'x/2 - Sin[2 x]/4')
 end)
 
-h.run_test('graphics_are_embedded_and_reloaded_with_stale_detection', function()
+h.run_test('graphics_embedded_mode_reloads_with_stale_detection', function()
   local png = vim.base64.encode('\137PNG fake image bytes')
   local function plot_cell(src)
     return {
@@ -92,7 +92,7 @@ h.run_test('graphics_are_embedded_and_reloaded_with_stale_detection', function()
     }
   end
   local tmp = vim.fn.tempname() .. '.wlnb'
-  wlnb.write(tmp, { plot_cell('Plot[x, {x, 0, 1}]') })
+  wlnb.write(tmp, { plot_cell('Plot[x, {x, 0, 1}]') }, 'embedded')
   local lines = vim.fn.readfile(tmp)
   local text = table.concat(lines, '\n')
   local hash = text:match('%(%* %-Graphics%- (%x+) %*%)')
@@ -105,7 +105,7 @@ h.run_test('graphics_are_embedded_and_reloaded_with_stale_detection', function()
   h.assert_eq(cells[1].outputs[1].data['image/png'], png)
   h.assert_eq(cells[1].outputs[1].data['text/plain'], '-Graphics-')
   h.assert_eq(#cells, 1) -- the assets section is not a cell
-  wlnb.write(tmp, cells)
+  wlnb.write(tmp, cells, 'embedded')
   h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), text)
   -- Edit the code: the image is stale and keeps its original hash
   local edited = vim.fn.readfile(tmp)
@@ -113,9 +113,40 @@ h.run_test('graphics_are_embedded_and_reloaded_with_stale_detection', function()
   vim.fn.writefile(edited, tmp)
   cells = wlnb.read(tmp)
   h.assert_eq(cells[1].outputs[1].data['text/plain'], '-Graphics- [stale]')
-  wlnb.write(tmp, cells)
+  wlnb.write(tmp, cells, 'embedded')
   h.assert_true(table.concat(vim.fn.readfile(tmp), '\n'):find('-Graphics- ' .. hash, 1, true) ~= nil, 'hash kept')
   vim.fn.delete(tmp)
+end)
+
+h.run_test('sidecar_mode_keeps_notebook_readable_and_images_in_wlnbi', function()
+  local png = vim.base64.encode('\137PNG fake image bytes')
+  local cell = {
+    id = 'a', type = 'code', source = 'Plot[x]', metadata = {},
+    outputs = { { output_type = 'execute_result', data = { ['text/plain'] = '-Graphics-', ['image/png'] = png }, metadata = {} } },
+  }
+  local tmp = vim.fn.tempname() .. '.wlnb'
+  local side = wlnb.sidecar_path(tmp)
+  wlnb.write(tmp, { cell }) -- default mode: sidecar
+  local text = table.concat(vim.fn.readfile(tmp), '\n')
+  h.assert_true(text:find('::assets::', 1, true) == nil and #text < 200, 'notebook has no image data')
+  h.assert_eq(vim.fn.filereadable(side), 1)
+  h.assert_eq(vim.fn.readfile(side)[1], '(* ::wlnbi:: v1 *)')
+  local cells = wlnb.read(tmp)
+  h.assert_eq(cells[1].outputs[1].data['image/png'], png)
+  -- Saving again is stable
+  wlnb.write(tmp, cells)
+  h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), text)
+  -- Without the images file the plot is reported missing but the notebook still opens
+  local copy = vim.fn.tempname() .. '.wlnb'
+  vim.fn.writefile(vim.fn.readfile(tmp), copy)
+  local lonely = wlnb.read(copy)
+  h.assert_true(lonely[1].outputs[1].data['text/plain']:find('missing image', 1, true) ~= nil, 'missing image reported')
+  -- No images left: the stale images file goes away
+  cells[1].outputs = {}
+  wlnb.write(tmp, cells)
+  h.assert_eq(vim.fn.filereadable(side), 0)
+  vim.fn.delete(tmp)
+  vim.fn.delete(copy)
 end)
 
 h.run_test('old_files_with_an_assets_folder_are_migrated_on_save', function()
@@ -145,13 +176,13 @@ h.run_test('rendered_math_keeps_inputform_text_and_png', function()
   local cell = { id = 'a', type = 'code', source = 'Sqrt[a^2]/2', metadata = {},
     outputs = { { output_type = 'execute_result', data = { ['text/plain'] = 'Sqrt[a^2]/2', ['image/png'] = png }, metadata = {} } } }
   local tmp = vim.fn.tempname() .. '.wlnb'
-  wlnb.write(tmp, { cell })
+  wlnb.write(tmp, { cell }, 'embedded')
   local first = table.concat(vim.fn.readfile(tmp), '\n')
   h.assert_true(first:match('%(%* Sqrt%[a%^2%]/2\n%-Rendered%- %x+ %*%)') ~= nil, 'marker follows the text')
   local cells = wlnb.read(tmp)
   h.assert_eq(cells[1].outputs[1].data['text/plain'], 'Sqrt[a^2]/2')
   h.assert_eq(cells[1].outputs[1].data['image/png'], png)
-  wlnb.write(tmp, cells)
+  wlnb.write(tmp, cells, 'embedded')
   h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), first)
   vim.fn.delete(tmp)
 end)

@@ -255,6 +255,25 @@ function M.setup_buffer(state)
     output.yank_output(state)
   end, { desc = 'Copy current cell output to the clipboard' })
 
+  vim.api.nvim_buf_create_user_command(buf, 'NotebookCopy', function(opts)
+    -- Saves, then copies the notebook and its images file together (they only work as a pair)
+    local src = state.source_path or vim.api.nvim_buf_get_name(buf)
+    local dest = vim.fn.expand(opts.args)
+    if vim.fn.isdirectory(dest) == 1 then
+      dest = dest .. '/' .. vim.fn.fnamemodify(src, ':t')
+    end
+    if vim.bo[buf].modified then
+      vim.cmd('silent write')
+    end
+    local wlnb = require('ipynb.wlnb')
+    vim.fn.writefile(vim.fn.readfile(src), dest)
+    local side = wlnb.sidecar_path(src)
+    if vim.fn.filereadable(side) == 1 then
+      vim.fn.writefile(vim.fn.readfile(side), wlnb.sidecar_path(dest))
+    end
+    vim.notify('Copied ' .. vim.fn.fnamemodify(dest, ':t') .. (vim.fn.filereadable(side) == 1 and ' and its .wlnbi' or ''))
+  end, { nargs = 1, complete = 'file', desc = 'Copy the notebook together with its images file' })
+
   vim.api.nvim_buf_create_user_command(buf, 'NotebookClearOutput', function()
     keymaps.clear_output(state)
   end, { desc = 'Clear current cell output' })

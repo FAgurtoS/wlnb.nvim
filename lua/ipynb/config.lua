@@ -7,6 +7,7 @@ local M = {}
 ---@field keymaps KeymapConfig
 ---@field highlights HighlightConfig
 ---@field border_hints BorderHintsConfig
+---@field assets 'sidecar'|'embedded' Where .wlnb result images are saved (default: 'sidecar')
 ---@field kernel KernelConfig
 ---@field images ImageConfig
 ---@field inspector InspectorConfig
@@ -178,6 +179,8 @@ M.defaults = {
 		show_on_hover = true,
 		show_on_edit = true,
 	},
+	-- Where result images are saved: 'sidecar' (<name>.wlnbi next to the notebook) or 'embedded'
+	assets = "sidecar",
 	kernel = {
 		auto_connect = false,
 		show_status = true,

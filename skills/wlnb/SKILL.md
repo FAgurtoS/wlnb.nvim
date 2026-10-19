@@ -22,7 +22,7 @@ Integrate[Sin[x]^2, x]
 
 - `input` is Wolfram code. An `output` belongs to the input right above it and is InputForm text in one comment.
 - `markdown` and `raw` bodies are wrapped in one comment (`(*` is written `(\*`, `*)` is written `*\)`).
-- Images are embedded in one section at the end of the file, starting at the line `(* ::assets:: *)` (base64 PNG, long lines). Outputs refer to them as `(* -Graphics- <hash> *)` or a last `-Rendered- <hash>` line. Never edit them by hand and skip that section when reading: everything above it is the whole notebook.
+- Images are not in the notebook: they live in a sidecar `<name>.wlnbi` next to it (base64 PNG, long lines; never read or edit it). Outputs refer to them as `(* -Graphics- <hash> *)` or a last `-Rendered- <hash>` line. If the notebook was saved in embedded mode, the images are in a section starting at `(* ::assets:: *)` at the end: skip it. Always move or copy a notebook together with its `.wlnbi` (`:NotebookCopy` inside Neovim does both).
 - Full spec: `FORMAT.md` in the wlnb.nvim repository (`~/wlnb.nvim`).
 
 ## Two ways to work

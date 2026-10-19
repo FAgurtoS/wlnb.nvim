@@ -150,7 +150,7 @@ Code cells are highlighted with the official
 
 - No completion, variable inspector or LSP for Wolfram.
 - Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLNB_RENDER_MATH=0` to turn rendering off, or `WLNB_MATH_STYLE=light` (black on white) / `dark` (Wolfram's dark box) instead of the default transparent background with light text.
-- Plot and result images are embedded at the end of the `.wlnb` (one `(* ::assets:: *)` section), so a notebook is always a single file you can copy anywhere; old notebooks with a `<notebook>.assets` folder are migrated when you save. If the code above a plot changed since it ran, the output shows `[stale]`. See [FORMAT.md](FORMAT.md).
+- Plot and result images are saved on `:w` next to the notebook in a sidecar file of the same name: `plot.wlnb` (readable cells) + `plot.wlnbi` (images). Copy them together: `:NotebookCopy destination` copies both, and a notebook opened without its `.wlnbi` still works but warns that images are missing. `require('ipynb').setup({ assets = 'embedded' })` puts the images at the end of the `.wlnb` instead (one file, ugly tail). Old notebooks with a `<notebook>.assets` folder are migrated when you save. If the code above a plot changed since it ran, the output shows `[stale]`. See [FORMAT.md](FORMAT.md).
 
 ---
 
