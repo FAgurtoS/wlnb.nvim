@@ -4,7 +4,7 @@ Goal: edit Wolfram notebooks (.wlnb) in Neovim, agent-readable, outputs in Input
 Rule: small steps, one check each, commit per step. Don't read edit.lua/words.lua whole; grep.
 Status marks: [ ] todo, [x] done.
 
-- [ ] 0. FORMAT.md + examples/*.wlnb (3-4 samples) agreed
+- [x] 0. FORMAT.md + examples/*.wlnb (3-4 samples) agreed
 - [x] 1. Baseline: all upstream tests pass in the fork (Lua module stays `ipynb` for now; rename deferred). No Xcode CLT on this Mac: build the parser with `PATH=$PWD/scripts/zig-cc:$PATH` (needs `brew install zig tree-sitter-cli`)
 - [x] 2. lua/ipynb/wlnb.lua (parse/serialize) wired into io.lua + BufReadCmd/BufWriteCmd for *.wlnb; tests/test_wlnb.lua. Check: open+save roundtrip is byte-identical
 - [x] 3. tree-sitter-wolfram (WolframResearch, pinned 6a2754f) vendored in tree-sitter-wolfram/ with highlights from zed-wolfram-highlighter; registered in init.lua/highlight: wolfram injection for input cells (or reuse markers via cells.lua)

@@ -4,10 +4,16 @@
 Plot[Sin[x], {x, 0, 2 Pi}]
 
 (* ::cell:: output *)
-(* -Graphics- *)
+(* -Graphics- 34a1aa3b44c5 *)
 
 (* ::cell:: input *)
-f
+f[x] = 1-2*M/r^2
 
 (* ::cell:: output *)
-(* f *)
+(* 1 - (2*M)/r^2 *)
+
+(* ::cell:: input *)
+r = 2M
+
+(* ::cell:: output *)
+(* 2*M *)
