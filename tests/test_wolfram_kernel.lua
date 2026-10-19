@@ -91,7 +91,18 @@ h.run_test('wolfram_kernel_end_to_end', function()
   local t4 = run(3)
   h.assert_true(t4:find('1 + x', 1, true) ~= nil, 'x should be undefined after restart: ' .. t4)
 
-  kernel.shutdown(state)
+  -- closing the notebook must stop its kernel (it would hold a license slot otherwise)
+  local pid
+  for _, k in ipairs(kernels.list()) do
+    if k.state == state then
+      pid = k.pid
+    end
+  end
+  h.assert_true(pid ~= nil, 'kernel pid not found before closing')
+  vim.api.nvim_buf_delete(state.facade_buf, { force = true })
+  h.assert_true(vim.wait(10000, function()
+    return vim.uv.kill(pid, 0) ~= 0
+  end, 100), 'kernel still running after the notebook was closed')
 end)
 
 local success = h.summary()

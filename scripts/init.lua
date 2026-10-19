@@ -14,21 +14,17 @@ end
 vim.o.fillchars = 'eob: '
 vim.o.termguicolors = true
 vim.o.swapfile = false
--- Kernel indicator in the status line (the plugin ships a component but no statusline of its own)
+-- Status line: running kernels / license limit, coloured by this notebook's kernel
+-- (green = ready, yellow = running a cell, grey = not started)
 function _G.WlnKernel()
+  local kernels = require('ipynb.kernels')
+  local count, max = kernels.count(), kernels.get_max()
   local ok, _, hl_state = pcall(require('ipynb.kernel').statusline)
-  if not ok or not hl_state then
-    return ''
-  end
-  local labels = {
-    disconnected = 'kernel OFF (Space s to start)',
-    ready = 'kernel READY',
-    busy = 'kernel RUNNING...',
-  }
-  return labels[hl_state] or ''
+  local hl = ({ ready = 'DiagnosticOk', busy = 'DiagnosticWarn' })[ok and hl_state or ''] or 'Comment'
+  return ('%%#%s#Kernels %s/%s%%*'):format(hl, count or '?', max or '?')
 end
 vim.o.laststatus = 2
-vim.o.statusline = '%f %m%= %{v:lua.WlnKernel()} '
+vim.o.statusline = '%f %m%= %{%v:lua.WlnKernel()%} '
 
 vim.g.mapleader = ' '
 require('ipynb').setup({
@@ -43,6 +39,8 @@ require('ipynb').setup({
     yank_output = '<leader>y',
     output_panel = '<leader>p',
     kernel_list = '<leader>K',
+    kernel_shutdown = '<leader>x',
+    kernel_restart = '<leader>X',
     make_markdown = '<leader>m',
     make_code = '<leader>c',
   },

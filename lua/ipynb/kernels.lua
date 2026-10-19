@@ -51,12 +51,11 @@ local function short(cmd, n)
   return cmd
 end
 
----Running WolframKernel processes of this user, with their owner
+---@param stdout string Output of `ps -axo pid=,ppid=,etime=,command=`
 ---@return WolframKernelInfo[]
-function M.list()
-  local res = vim.system({ 'ps', '-axo', 'pid=,ppid=,etime=,command=' }, { text = true }):wait()
+local function parse_kernels(stdout)
   local procs = {} ---@type table<number, {ppid:number, etime:string, cmd:string}>
-  for line in (res.stdout or ''):gmatch('[^\n]+') do
+  for line in (stdout or ''):gmatch('[^\n]+') do
     local pid, ppid, etime, cmd = line:match('^%s*(%d+)%s+(%d+)%s+(%S+)%s+(.*)$')
     if pid then
       procs[tonumber(pid)] = { ppid = tonumber(ppid), etime = etime, cmd = cmd }
@@ -100,16 +99,49 @@ function M.list()
   return kernels
 end
 
+local PS_CMD = { 'ps', '-axo', 'pid=,ppid=,etime=,command=' }
+
+---Running WolframKernel processes of this user, with their owner
+---@return WolframKernelInfo[]
+function M.list()
+  return parse_kernels(vim.system(PS_CMD, { text = true }):wait().stdout)
+end
+
+local monitor ---@type uv.uv_timer_t|nil
+M._count = nil ---@type number|nil
+
+---Number of running kernels, refreshed in the background every few seconds (cheap enough for a status line)
+---@return number|nil
+function M.count()
+  if not monitor then
+    monitor = assert(vim.uv.new_timer())
+    local function refresh()
+      vim.system(PS_CMD, { text = true }, function(res)
+        vim.schedule(function()
+          local n = #parse_kernels(res.stdout)
+          if n ~= M._count then
+            M._count = n
+            vim.cmd('redrawstatus')
+          end
+        end)
+      end)
+    end
+    monitor:start(0, 3000, refresh)
+  end
+  return M._count
+end
+
 ---Stop a kernel: through its notebook when it is ours, otherwise by signal
 ---@param info WolframKernelInfo
 function M.kill(info)
   if info.state then
     require('ipynb.kernel').shutdown(info.state)
   end
-  pcall(vim.uv.kill, info.pid, 'sigterm')
+  vim.uv.kill(info.pid, 'sigterm')
   vim.defer_fn(function()
-    if pcall(vim.uv.kill, info.pid, 0) then
-      pcall(vim.uv.kill, info.pid, 'sigkill')
+    -- uv.kill returns 0 on success and nil + error when the process is gone
+    if vim.uv.kill(info.pid, 0) == 0 then
+      vim.uv.kill(info.pid, 'sigkill')
     end
   end, 1500)
 end

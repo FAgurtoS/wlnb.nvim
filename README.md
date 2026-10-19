@@ -54,9 +54,13 @@ Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell fo
 | Copy output to the clipboard | `Space` `y` (`:NotebookYankOutput`) |
 | Open output in a float | `Space` `o` |
 | List running Wolfram kernels / stop one | `Space` `K` (`:NotebookKernels`; `x` stops, `r` refreshes, `q` closes) |
-| Interrupt / restart / shut down kernel | `Ctrl-c` / `:NotebookKernelRestart` / `:NotebookKernelShutdown` |
+| Stop this notebook's kernel / restart it | `Space` `x` / `Space` `X` |
+| Interrupt (kills and restarts the kernel) | `Ctrl-c` |
 
-Start the kernel before running cells; otherwise you get "No kernel connected". The kernel keeps
+The launcher's status line shows `Kernels n/max`: kernels running on the machine against the license
+limit, green when this notebook's kernel is ready, yellow while it runs a cell, grey when it is not
+started. Start the kernel before running cells; otherwise you get "No kernel connected". Closing a
+notebook stops its kernel, and so does quitting Neovim. The kernel keeps
 variables between cells. Interrupt is implemented by killing and restarting the kernel, so
 variables are lost (a piped `WolframKernel` dies on SIGINT).
 

@@ -196,6 +196,12 @@ end
 function M.remove(buf)
   local state = M.notebooks[buf]
   if state then
+    -- Stop the kernel: it would otherwise keep running (and hold a license slot) after the notebook closes
+    local kernel_ok, kernel_mod = pcall(require, 'ipynb.kernel')
+    if kernel_ok and state.kernel and state.kernel.job_id then
+      kernel_mod.shutdown(state)
+    end
+
     -- Cleanup any active kernel stdin prompt before the notebook state disappears.
     local input_ok, input_mod = pcall(require, 'ipynb.input')
     if input_ok then

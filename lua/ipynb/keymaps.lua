@@ -441,6 +441,8 @@ function M.execute_cell(state)
 
   if cell and cell.type == 'code' then
     kernel.execute(state, cell_idx)
+  else
+    vim.notify('Not on a code cell: move the cursor onto a cell with code', vim.log.levels.WARN)
   end
 end
 
