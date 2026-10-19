@@ -35,7 +35,7 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 
   In the notebook, a plot output is `(* -Graphics- <hash> *)` and a rendered result is its InputForm
   text followed by a last line `-Rendered- <hash>` (hash of the PNG bytes; the text is what gets copied,
-  the image is only for viewing). ?Symbol info panels are never saved as images.
+  the image is only for viewing). ?Symbol info panels are saved the same way.
 - Single-file mode: with the `assets = "embedded"` setting the same `::assets::` section is appended to
   the end of the notebook instead (everything from that line on can be cut with no loss of code).
 - The reader accepts all three layouts (sidecar, embedded section, v0 `<notebook>.assets/<hash>.png`);

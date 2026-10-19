@@ -164,11 +164,17 @@ h.run_test('old_files_with_an_assets_folder_are_migrated_on_save', function()
   vim.fn.delete(tmp)
 end)
 
-h.run_test('info_boxes_keep_text_only', function()
+h.run_test('info_boxes_are_saved_as_images_like_other_results', function()
+  local box = vim.base64.encode('info panel image')
   local cell = { id = 'a', type = 'code', source = '?Series', metadata = {},
-    outputs = { { output_type = 'execute_result', data = { ['text/plain'] = 'InformationData[<|"x" -> 1|>]', ['image/png'] = vim.base64.encode('big') }, metadata = {} } } }
-  local text = table.concat(wlnb.serialize({ cell }), '\n')
-  h.assert_true(text:find('::assets::', 1, true) == nil and text:find('-Rendered-', 1, true) == nil, 'no image stored')
+    outputs = { { output_type = 'execute_result', data = { ['text/plain'] = 'InformationData[<|"x" -> 1|>]', ['image/png'] = box }, metadata = {} } } }
+  local tmp = vim.fn.tempname() .. '.wlnb'
+  wlnb.write(tmp, { cell })
+  local text = table.concat(vim.fn.readfile(tmp), '\n')
+  h.assert_true(text:find('-Rendered- ', 1, true) ~= nil, 'info box has an image marker')
+  h.assert_eq(wlnb.read(tmp)[1].outputs[1].data['image/png'], box)
+  vim.fn.delete(tmp)
+  vim.fn.delete(wlnb.sidecar_path(tmp))
 end)
 
 h.run_test('rendered_math_keeps_inputform_text_and_png', function()

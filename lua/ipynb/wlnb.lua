@@ -246,9 +246,7 @@ function M.serialize(cells, _path, embed)
           png = table.concat(png, '')
         end
         local is_graphics = text and (text:match('^%-Graphics%-') or text:match('^%-Image%-'))
-        -- ?Symbol info panels are big and cheap to regenerate: keep their text only
-        local is_info = text and text:match('^InformationData%[')
-        if png and not is_info then
+        if png then
           local bytes = vim.base64.decode((png:gsub('%s', '')))
           -- A graphics marker keeps the hash it was loaded with; rendered math is named after its bytes
           local hash = is_graphics and (out.metadata and out.metadata.wlnb_hash or chain)
