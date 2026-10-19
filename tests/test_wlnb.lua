@@ -83,6 +83,42 @@ h.run_test('yank_output_copies_cell_output_to_register', function()
   h.assert_eq(vim.fn.getreg('"'), 'x/2 - Sin[2 x]/4')
 end)
 
+h.run_test('graphics_are_saved_to_assets_and_reloaded_with_stale_detection', function()
+  local png = vim.base64.encode('\137PNG fake image bytes')
+  local function plot_cell(src)
+    return {
+      id = 'a', type = 'code', source = src, metadata = {},
+      outputs = { { output_type = 'execute_result', data = { ['text/plain'] = '-Graphics-', ['image/png'] = png }, metadata = {} } },
+    }
+  end
+  local tmp = vim.fn.tempname() .. '.wlnb'
+  wlnb.write(tmp, { plot_cell('Plot[x, {x, 0, 1}]') })
+  local lines = vim.fn.readfile(tmp)
+  local hash = lines[#lines]:match('^%(%* %-Graphics%- (%x+) %*%)$')
+  h.assert_true(hash ~= nil, 'marker has a hash')
+  h.assert_eq(vim.fn.filereadable(tmp .. '.assets/' .. hash .. '.png'), 1)
+  -- Reload: image restored, not stale, and a second save keeps the same marker
+  local cells = wlnb.read(tmp)
+  h.assert_eq(cells[1].outputs[1].data['image/png'], png)
+  h.assert_eq(cells[1].outputs[1].data['text/plain'], '-Graphics-')
+  wlnb.write(tmp, cells)
+  h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), table.concat(lines, '\n'))
+  -- Edit the code: the image is stale and keeps pointing at its old PNG
+  local edited = vim.fn.readfile(tmp)
+  edited[4] = 'Plot[2 x, {x, 0, 1}]'
+  vim.fn.writefile(edited, tmp)
+  cells = wlnb.read(tmp)
+  h.assert_eq(cells[1].outputs[1].data['text/plain'], '-Graphics- [stale]')
+  wlnb.write(tmp, cells)
+  h.assert_eq(vim.fn.readfile(tmp)[#lines], lines[#lines])
+  -- The old PNG is still referenced; an unreferenced one is removed
+  vim.fn.writefile({ 'x' }, tmp .. '.assets/deadbeef0000.png')
+  h.assert_eq(wlnb.clean_assets(tmp), 1)
+  h.assert_eq(vim.fn.filereadable(tmp .. '.assets/' .. hash .. '.png'), 1)
+  vim.fn.delete(tmp)
+  vim.fn.delete(tmp .. '.assets', 'rf')
+end)
+
 local success = h.summary()
 if success then
   vim.cmd('qa!')

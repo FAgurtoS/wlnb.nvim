@@ -11,7 +11,7 @@ Status marks: [ ] todo, [x] done.
 - [x] 4. python/wolfram_bridge.py drives WolframKernel over pipes (stdlib only, same JSON protocol as kernel_bridge.py); kernel.lua picks it when kernelspec is wolframscript. Interrupt = kill + fresh kernel (state lost; a piped kernel dies on SIGINT). Start takes ~9 s. Original note: Wolfram Jupyter kernel via existing kernel_bridge.py. Check: 1+1 -> 2
 - [~] 5. (text part done: results saved as InputForm in the .wlnb; image PNG shown via execute_result image/png but not persisted yet) Outputs as InputForm (ToString[expr, InputForm]), stored in file, float to copy
 - [x] 5b. Kernel control: interrupt, restart, shutdown (bridge must handle them; plugin already has :NotebookKernelInterrupt/Restart/Shutdown + keymaps). Restart marks all outputs [stale]. Check: infinite loop is interrupted; after restart, x is undefined
-- [ ] 6. Plots -> PNG via images.lua; TeXForm optional
+- [x] 6. Plots -> PNG via images.lua; TeXForm optional
 - [ ] 7. Optional: own wolframscript bridge, LSP, .wln <-> .wlnb converter
 
 Env: wolframscript found at /usr/local/bin; `jupyter` NOT found -> step 4 likely needs own bridge (step 7 moves up).

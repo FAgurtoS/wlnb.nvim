@@ -90,7 +90,7 @@ Code cells are highlighted with the official
 ## Limitations
 
 - No completion, variable inspector or LSP for Wolfram.
-- Plot images are not yet persisted next to the notebook (planned: `<notebook>.assets/`).
+- Plot images are saved on `:w` to `<notebook>.assets/<hash>.png` and the file holds only `(* -Graphics- <hash> *)`. Copy the `.assets` folder together with the notebook. If the code above a plot changed since it ran, the output shows `[stale]`. `:NotebookCleanAssets` deletes PNGs no marker references (run it after saving).
 
 ---
 

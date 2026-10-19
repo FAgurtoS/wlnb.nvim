@@ -53,13 +53,32 @@ local function output_text(out)
   end
 end
 
+local GRAPHICS_PREFIX = '-Graphics- '
+
+---Assets folder of a notebook: <notebook>.assets
+---@param path string
+---@return string
+function M.assets_dir(path)
+  return path .. '.assets'
+end
+
+---Chained hash of a code cell: its source plus all previous code cells, in order
+---@param prev_hash string
+---@param source string
+---@return string
+local function chain_hash(prev_hash, source)
+  return vim.fn.sha256(prev_hash .. '\0' .. source):sub(1, 12)
+end
+
 ---Parse .wlnb lines into cells
 ---@param lines string[]
+---@param path string|nil Notebook path, used to load PNGs from the assets folder
 ---@return Cell[], table metadata, table<string, boolean> cell_ids
-function M.parse(lines)
+function M.parse(lines, path)
   local cell_ids = {}
   local cells = {}
   local current, body
+  local chain = ''
 
   -- The blank separator is only present between cells, not after the last one.
   local function finish(at_eof)
@@ -73,10 +92,26 @@ function M.parse(lines)
     if current.kind == 'output' then
       local prev = cells[#cells]
       if prev and prev.type == 'code' then
+        local out_text = unwrap_comment(text)
+        local data = { ['text/plain'] = out_text }
+        local hash = out_text:match('^%-Graphics%- (%x+)$')
+        if hash then
+          data['text/plain'] = '-Graphics-'
+          local file = path and io.open(M.assets_dir(path) .. '/' .. hash .. '.png', 'rb')
+          if file then
+            data['image/png'] = vim.base64.encode(file:read('*a'))
+            file:close()
+            if hash ~= prev._chain then
+              data['text/plain'] = '-Graphics- [stale]'
+            end
+          else
+            data['text/plain'] = '-Graphics- [missing image ' .. hash .. ']'
+          end
+        end
         table.insert(prev.outputs, {
           output_type = 'execute_result',
-          data = { ['text/plain'] = unwrap_comment(text) },
-          metadata = vim.empty_dict(),
+          data = data,
+          metadata = hash and data['image/png'] and { wlnb_hash = hash } or vim.empty_dict(),
           execution_count = vim.NIL,
         })
       end
@@ -84,7 +119,11 @@ function M.parse(lines)
       local id = state_mod.generate_cell_id(cell_ids)
       cell_ids[id] = true
       local is_input = current.kind == 'input'
+      if is_input then
+        chain = chain_hash(chain, text)
+      end
       table.insert(cells, {
+        _chain = is_input and chain or nil,
         id = id,
         type = is_input and 'code' or current.kind,
         source = is_input and text or unwrap_comment(text),
@@ -105,25 +144,50 @@ function M.parse(lines)
     end
   end
   finish(true)
+  for _, cell in ipairs(cells) do
+    cell._chain = nil
+  end
 
   return cells, M.default_metadata(), cell_ids
 end
 
 ---Serialize cells into .wlnb lines
 ---@param cells Cell[]
+---@param path string|nil When given, PNG outputs are saved to the assets folder
 ---@return string[]
-function M.serialize(cells)
+function M.serialize(cells, path)
   local lines = { HEADER, '' }
   local function add(kind, text)
     table.insert(lines, MARKER_PREFIX .. kind .. ' *)')
     vim.list_extend(lines, vim.split(text, '\n', { plain = true }))
     table.insert(lines, '')
   end
+  local chain = ''
   for _, cell in ipairs(cells) do
     if cell.type == 'code' then
       add('input', cell.source)
+      chain = chain_hash(chain, cell.source)
       for _, out in ipairs(cell.outputs or {}) do
         local text = output_text(out)
+        local png = out.data and out.data['image/png']
+        if type(png) == 'table' then
+          png = table.concat(png, '')
+        end
+        if png and path then
+          -- Keep the hash the marker already carries when the image was loaded from disk
+          local hash = out.metadata and out.metadata.wlnb_hash or chain
+          local dir = M.assets_dir(path)
+          local file = dir .. '/' .. hash .. '.png'
+          if vim.fn.filereadable(file) == 0 then
+            vim.fn.mkdir(dir, 'p')
+            local f = io.open(file, 'wb')
+            if f then
+              f:write(vim.base64.decode((png:gsub('%s', ''))))
+              f:close()
+            end
+          end
+          text = GRAPHICS_PREFIX .. hash
+        end
         if text then
           add('output', wrap_comment(text))
         end
@@ -138,16 +202,44 @@ function M.serialize(cells)
   return lines
 end
 
+---Delete PNGs in the assets folder that no marker in the saved file references
+---@param path string Notebook path (the saved file is what counts)
+---@return integer removed
+function M.clean_assets(path)
+  local dir = M.assets_dir(path)
+  if vim.fn.isdirectory(dir) == 0 or vim.fn.filereadable(path) == 0 then
+    return 0
+  end
+  local used = {}
+  for _, line in ipairs(vim.fn.readfile(path)) do
+    local hash = line:match('^%(%* %-Graphics%- (%x+) %*%)$')
+    if hash then
+      used[hash] = true
+    end
+  end
+  local removed = 0
+  for _, file in ipairs(vim.fn.glob(dir .. '/*.png', false, true)) do
+    if not used[vim.fn.fnamemodify(file, ':t:r')] then
+      vim.fn.delete(file)
+      removed = removed + 1
+    end
+  end
+  if #vim.fn.glob(dir .. '/*', false, true) == 0 then
+    vim.fn.delete(dir, 'd')
+  end
+  return removed
+end
+
 ---@param path string
 ---@return Cell[], table metadata, table<string, boolean> cell_ids
 function M.read(path)
-  return M.parse(vim.fn.readfile(path))
+  return M.parse(vim.fn.readfile(path), path)
 end
 
 ---@param path string
 ---@param cells Cell[]
 function M.write(path, cells)
-  vim.fn.writefile(M.serialize(cells), path)
+  vim.fn.writefile(M.serialize(cells, path), path)
 end
 
 return M
