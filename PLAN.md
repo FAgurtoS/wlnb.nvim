@@ -1,4 +1,4 @@
-# wln.nvim plan (fork of ajbucci/ipynb.nvim)
+# wlnb.nvim plan (fork of ajbucci/ipynb.nvim)
 
 Goal: edit Wolfram notebooks (.wlnb) in Neovim, agent-readable, outputs in InputForm (copyable).
 Rule: small steps, one check each, commit per step. Don't read edit.lua/words.lua whole; grep.

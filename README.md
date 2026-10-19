@@ -1,4 +1,4 @@
-# wln.nvim
+# wlnb.nvim
 
 Wolfram Language notebooks in Neovim. A fork of [ajbucci/ipynb.nvim](https://github.com/ajbucci/ipynb.nvim)
 that edits plain-text `.wlnb` notebooks (agent-readable, git-friendly) and runs cells on a local
@@ -20,26 +20,26 @@ On macOS, everything else is in the [Brewfile](Brewfile): `brew bundle`. It inst
 put `scripts/zig-cc` first on `PATH` when the parser is first compiled) and Ghostty.
 
 ```sh
-git clone <this repo> ~/wln.nvim
-cd ~/wln.nvim
+git clone <this repo> ~/wlnb.nvim
+cd ~/wlnb.nvim
 # first run only (compiles the parser, clones test dependencies into tests/.nvim-test):
 PATH=$PWD/scripts/zig-cc:$PATH nvim --headless -u tests/minimal_init.lua -l tests/run_all.lua
 # open a notebook with the plugin loaded:
-./scripts/wln examples/basic.wlnb
+./scripts/wlnb examples/basic.wlnb
 ```
 
-`scripts/wln` is a throwaway launcher with a clean config (`scripts/init.lua`). To use the plugin in
+`scripts/wlnb` is a throwaway launcher with a clean config (`scripts/init.lua`). To use the plugin in
 your own Neovim, so that any `.wlnb` (for example opened from ranger) loads as cells, add it as a
 local plugin (lazy.nvim):
 
 ```lua
 {
-  dir = vim.fn.expand('~/wln.nvim'),
-  name = 'wln.nvim',
+  dir = vim.fn.expand('~/wlnb.nvim'),
+  name = 'wlnb.nvim',
   main = 'ipynb',
   dependencies = { 'nvim-treesitter/nvim-treesitter', 'neovim/nvim-lspconfig' },
   -- optional: put zig-cc first on PATH if you have no working C compiler
-  init = function() vim.env.PATH = vim.fn.expand('~/wln.nvim/scripts/zig-cc:') .. vim.env.PATH end,
+  init = function() vim.env.PATH = vim.fn.expand('~/wlnb.nvim/scripts/zig-cc:') .. vim.env.PATH end,
   opts = {},
 },
 { 'folke/snacks.nvim', opts = { image = { enabled = true } } }, -- inline images
@@ -52,16 +52,16 @@ highlight group). Notebook shortcuts start with a comma (`,`) and only exist ins
 ## Agents (Claude Code and others)
 
 `skills/wlnb/SKILL.md` teaches an agent the format and how to drive a notebook that is open in
-Neovim: `scripts/wln-agent list|get|set|insert|delete|run|save notebook.wlnb` talks to the running
+Neovim: `scripts/wlnb-agent list|get|set|insert|delete|run|save notebook.wlnb` talks to the running
 Neovim through `nvim --server` (no setup), so edits and runs show up live and nothing on disk is
-overwritten. For Claude Code, link it once: `ln -s ~/wln.nvim/skills/wlnb ~/.claude/skills/`.
+overwritten. For Claude Code, link it once: `ln -s ~/wlnb.nvim/skills/wlnb ~/.claude/skills/`.
 `run` starts the kernel if needed and refuses when the license limit is reached instead of prompting.
 
 ## Converting WLJS notebooks
 
 ```sh
-scripts/wln-convert notebook.wln            # -> notebook.wlnb
-scripts/wln-convert notebook.wlnb out.wln   # -> WLJS text format
+scripts/wlnb-convert notebook.wln            # -> notebook.wlnb
+scripts/wlnb-convert notebook.wlnb out.wln   # -> WLJS text format
 ```
 
 or `:NotebookConvert [source] [destination]` inside Neovim. Both WLJS flavours are read: the text one
@@ -129,7 +129,7 @@ Code cells are highlighted with the official
 ## Limitations
 
 - No completion, variable inspector or LSP for Wolfram.
-- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLN_RENDER_MATH=0` to turn rendering off.
+- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLNB_RENDER_MATH=0` to turn rendering off.
 - Plot images are saved on `:w` to `<notebook>.assets/<hash>.png` and the file holds only `(* -Graphics- <hash> *)`. Copy the `.assets` folder together with the notebook. If the code above a plot changed since it ran, the output shows `[stale]`. `:NotebookCleanAssets` deletes PNGs no marker references (run it after saving).
 
 ---

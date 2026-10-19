@@ -1,4 +1,4 @@
--- Agent API tests (scripts/wln-agent talks to this module through nvim --server)
+-- Agent API tests (scripts/wlnb-agent talks to this module through nvim --server)
 -- Run with: nvim --headless -u tests/minimal_init.lua -l tests/test_agent.lua
 
 local h = require('tests.helpers')

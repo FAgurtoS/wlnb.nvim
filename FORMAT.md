@@ -16,7 +16,7 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 
 ## Decisions
 - Images are NOT stored in the file. Plot outputs are written as `(* -Graphics- <hash> *)`.
-- Every result also gets a StandardForm PNG: the output body is the InputForm text followed by a last line `-Rendered- <hash>` (hash of the PNG bytes). The text is what gets copied; the image is only for viewing. Disable with env `WLN_RENDER_MATH=0`.
+- Every result also gets a StandardForm PNG: the output body is the InputForm text followed by a last line `-Rendered- <hash>` (hash of the PNG bytes). The text is what gets copied; the image is only for viewing. Disable with env `WLNB_RENDER_MATH=0`.
 - Portable: PNGs live in `<notebook>.assets/<hash>.png` next to the file and are versioned/copied with it.
 - `<hash>` = hash of the cell code plus ALL previous input cells, in order (chained hash).
 - On open, the marker names the PNG; it is always shown. If the cell's current chained hash differs from `<hash>`, it is shown dimmed with an `[stale]` label.

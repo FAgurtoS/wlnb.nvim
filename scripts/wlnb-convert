@@ -1,4 +1,4 @@
 #!/bin/sh
-# Convert between WLJS .wln and .wlnb notebooks. Usage: scripts/wln-convert in.wln [out.wlnb]
+# Convert between WLJS .wln and .wlnb notebooks. Usage: scripts/wlnb-convert in.wln [out.wlnb]
 root="$(cd "$(dirname "$0")/.." && pwd)"
 exec nvim --headless -u NONE --cmd "set rtp+=$root" -l "$root/scripts/convert.lua" "$@"

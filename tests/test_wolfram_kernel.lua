@@ -10,7 +10,7 @@ print(string.rep('=', 60))
 print('')
 
 if vim.fn.executable('wolframscript') ~= 1 and vim.fn.executable('/usr/local/bin/wolframscript') ~= 1
-  and vim.env.WLN_KERNEL == nil then
+  and vim.env.WLNB_KERNEL == nil then
   print('SKIP: wolframscript not installed')
   vim.cmd('qa!')
 end

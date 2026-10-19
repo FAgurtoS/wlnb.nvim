@@ -1,6 +1,6 @@
 ---
 name: wlnb
-description: Edit and run a Wolfram Language notebook (.wlnb) that is open in Neovim with wln.nvim, or edit a .wlnb file directly. Use when the user mentions a .wlnb notebook, wln.nvim, or asks to add, change, run or read cells of a Wolfram notebook open in nvim.
+description: Edit and run a Wolfram Language notebook (.wlnb) that is open in Neovim with wlnb.nvim, or edit a .wlnb file directly. Use when the user mentions a .wlnb notebook, wlnb.nvim, or asks to add, change, run or read cells of a Wolfram notebook open in nvim.
 ---
 
 # wln notebooks (.wlnb)
@@ -23,7 +23,7 @@ Integrate[Sin[x]^2, x]
 - `input` is Wolfram code. An `output` belongs to the input right above it and is InputForm text in one comment.
 - `markdown` and `raw` bodies are wrapped in one comment (`(*` is written `(\*`, `*)` is written `*\)`).
 - Plot outputs are `(* -Graphics- <hash> *)`; the PNG lives in `<notebook>.assets/<hash>.png`. Never edit these by hand.
-- Full spec: `FORMAT.md` in the wln.nvim repository (`~/wln.nvim`).
+- Full spec: `FORMAT.md` in the wlnb.nvim repository (`~/wlnb.nvim`).
 
 ## Two ways to work
 
@@ -32,13 +32,13 @@ Integrate[Sin[x]^2, x]
 **2. Notebook IS open in Neovim (use this when the user is looking at it):** do NOT edit the file on disk, because Neovim holds the cells in memory and would overwrite your change on `:w`. Use the control script instead (Neovim finds itself; no setup):
 
 ```sh
-~/wln.nvim/scripts/wln-agent list   notebook.wlnb          # cells: index, type, first line, outputs, state
-~/wln.nvim/scripts/wln-agent get    notebook.wlnb 3        # source + output texts of cell 3
-echo 'x = 5; x^2' | ~/wln.nvim/scripts/wln-agent set notebook.wlnb 3
-echo '# Title'   | ~/wln.nvim/scripts/wln-agent insert notebook.wlnb 2 markdown   # after cell 2 (0 = top)
-~/wln.nvim/scripts/wln-agent delete notebook.wlnb 4
-~/wln.nvim/scripts/wln-agent run    notebook.wlnb 3 --wait  # start kernel if needed, run, wait for the result
-~/wln.nvim/scripts/wln-agent save   notebook.wlnb           # writes the .wlnb (and PNGs)
+~/wlnb.nvim/scripts/wlnb-agent list   notebook.wlnb          # cells: index, type, first line, outputs, state
+~/wlnb.nvim/scripts/wlnb-agent get    notebook.wlnb 3        # source + output texts of cell 3
+echo 'x = 5; x^2' | ~/wlnb.nvim/scripts/wlnb-agent set notebook.wlnb 3
+echo '# Title'   | ~/wlnb.nvim/scripts/wlnb-agent insert notebook.wlnb 2 markdown   # after cell 2 (0 = top)
+~/wlnb.nvim/scripts/wlnb-agent delete notebook.wlnb 4
+~/wlnb.nvim/scripts/wlnb-agent run    notebook.wlnb 3 --wait  # start kernel if needed, run, wait for the result
+~/wlnb.nvim/scripts/wlnb-agent save   notebook.wlnb           # writes the .wlnb (and PNGs)
 ```
 
 Every command prints JSON with `"ok": true|false`. Cell indexes are 1-based and shift after insert/delete, so run `list` again after structural changes.
@@ -54,4 +54,4 @@ Rules:
 
 ## Converting
 
-`~/wln.nvim/scripts/wln-convert notebook.wln` (WLJS to .wlnb) and `... notebook.wlnb out.wln` (back).
+`~/wlnb.nvim/scripts/wlnb-convert notebook.wln` (WLJS to .wlnb) and `... notebook.wlnb out.wln` (back).

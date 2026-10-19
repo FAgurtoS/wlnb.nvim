@@ -1,6 +1,6 @@
 #!/bin/sh
 # Open files with the fork's plugin loaded, using the parser built by the test suite.
-# Usage: scripts/wln examples/basic.wlnb
+# Usage: scripts/wlnb examples/basic.wlnb
 root="$(cd "$(dirname "$0")/.." && pwd)"
 base="$root/tests/.nvim-test"
 export XDG_DATA_HOME="$base/share" XDG_STATE_HOME="$base/state" \

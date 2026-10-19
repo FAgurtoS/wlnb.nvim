@@ -1,4 +1,4 @@
--- ipynb/agent.lua - control an open notebook from outside Neovim (scripts/wln-agent, nvim --server).
+-- ipynb/agent.lua - control an open notebook from outside Neovim (scripts/wlnb-agent, nvim --server).
 -- Every function takes the notebook path and returns a JSON string, so it can be called with
 -- --remote-expr. Cell indexes are 1-based. Execution is asynchronous: run() returns at once,
 -- poll with get() until "state" is "idle".
@@ -164,7 +164,7 @@ function M.save(path)
   end, true)
 end
 
----Dispatch from a JSON request {"fn": "get", "args": [path, 1]} (used by scripts/wln-agent)
+---Dispatch from a JSON request {"fn": "get", "args": [path, 1]} (used by scripts/wlnb-agent)
 function M.call(request)
   local req = vim.json.decode(request)
   local fn = ({ list = 1, get = 1, set = 1, insert = 1, delete = 1, run = 1, save = 1 })[req.fn] and M[req.fn]

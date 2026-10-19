@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Control a .wlnb notebook that is open in a running Neovim (see skills/wlnb/SKILL.md).
 
-  wln-agent list   FILE
-  wln-agent get    FILE N
-  wln-agent set    FILE N            (new source on stdin)
-  wln-agent insert FILE AFTER TYPE   (source on stdin; AFTER=0 inserts at the top; TYPE code|markdown|raw)
-  wln-agent delete FILE N
-  wln-agent run    FILE N [--wait]   (starts the kernel if needed; --wait polls until the cell is idle)
-  wln-agent save   FILE
+  wlnb-agent list   FILE
+  wlnb-agent get    FILE N
+  wlnb-agent set    FILE N            (new source on stdin)
+  wlnb-agent insert FILE AFTER TYPE   (source on stdin; AFTER=0 inserts at the top; TYPE code|markdown|raw)
+  wlnb-agent delete FILE N
+  wlnb-agent run    FILE N [--wait]   (starts the kernel if needed; --wait polls until the cell is idle)
+  wlnb-agent save   FILE
 
 Prints JSON. Set NVIM_SERVER to pick a Neovim instance, otherwise every running one is tried.
 """

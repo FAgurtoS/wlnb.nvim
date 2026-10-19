@@ -31,7 +31,7 @@ FORMAT_CODE = (
     'StartOfString ~~ "HoldCompleteForm[" ~~ s__ ~~ "]" ~~ EndOfString :> s] &);'
 )
 
-RENDER_MATH = os.environ.get("WLN_RENDER_MATH", "1") != "0"
+RENDER_MATH = os.environ.get("WLNB_RENDER_MATH", "1") != "0"
 
 INIT_CODE = (
     '$WLNBRenderMath = ' + ('True' if RENDER_MATH else 'False') + '; '
@@ -62,7 +62,7 @@ COMMON_SCRIPT_PATHS = ["/usr/local/bin/wolframscript", "/opt/homebrew/bin/wolfra
 
 
 def find_kernel() -> Optional[str]:
-    env = os.environ.get("WLN_KERNEL")
+    env = os.environ.get("WLNB_KERNEL")
     if env and os.path.exists(env):
         return env
     found = shutil.which("WolframKernel")
@@ -103,7 +103,7 @@ class WolframBridge:
     def _spawn(self) -> bool:
         self.kernel_path = self.kernel_path or find_kernel()
         if not self.kernel_path:
-            self.send_message({"type": "error", "error": "WolframKernel not found. Set WLN_KERNEL or install wolframscript."})
+            self.send_message({"type": "error", "error": "WolframKernel not found. Set WLNB_KERNEL or install wolframscript."})
             return False
         self.generation += 1
         self.proc = subprocess.Popen(
