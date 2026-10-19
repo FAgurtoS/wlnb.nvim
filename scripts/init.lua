@@ -17,11 +17,8 @@ vim.o.swapfile = false
 -- Status line: running kernels / license limit, coloured by this notebook's kernel
 -- (green = ready, yellow = running a cell, grey = not started)
 function _G.WlnKernel()
-  local kernels = require('ipynb.kernels')
-  local count, max = kernels.count(), kernels.get_max()
-  local ok, _, hl_state = pcall(require('ipynb.kernel').statusline)
-  local hl = ({ ready = 'DiagnosticOk', busy = 'DiagnosticWarn' })[ok and hl_state or ''] or 'Comment'
-  return ('%%#%s#Kernels %s/%s%%*'):format(hl, count or '?', max or '?')
+  local text, hl = require('ipynb.kernels').status()
+  return ('%%#%s#%s%%*'):format(hl, text)
 end
 vim.o.clipboard = 'unnamedplus' -- y copies to the system clipboard too
 vim.o.laststatus = 2

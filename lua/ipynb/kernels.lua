@@ -268,4 +268,13 @@ function M.show()
   end)
 end
 
+---Status line text and highlight group: running kernels / license limit.
+---The group reflects this notebook's kernel (green ready, yellow busy, grey otherwise).
+---@return string text, string hl
+function M.status()
+  local ok, _, hl_state = pcall(require('ipynb.kernel').statusline)
+  local hl = ({ ready = 'DiagnosticOk', busy = 'DiagnosticWarn' })[ok and hl_state or ''] or 'Comment'
+  return ('Kernels %s/%s'):format(M.count() or '?', M.get_max() or '?'), hl
+end
+
 return M

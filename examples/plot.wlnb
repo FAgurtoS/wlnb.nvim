@@ -14,7 +14,12 @@ f[r]
 
 (* ::cell:: output *)
 (* 1 - (2*M)/r^2
--Rendered- 7dad6dd770df *)
+-Rendered- fd4a8d029e2f *)
 
 (* ::cell:: input *)
+1 - (2*M)/r^2
+ 
 
+(* ::cell:: output *)
+(* 1 - (2*M)/r^2
+-Rendered- 25b29302558f *)
