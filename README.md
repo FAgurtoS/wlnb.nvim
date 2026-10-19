@@ -54,9 +54,9 @@ highlight group). Notebook shortcuts start with a comma (`,`) and only exist ins
 ## Syntax colors
 
 Wolfram cells are colored by a tiny built-in highlighter (`lua/ipynb/wl_highlight.lua`): comments,
-strings, numbers, built-in symbols, patterns (`x_`), operators and slots. It paints once when a cell
+strings, numbers, built-in symbols, any name applied with `[` (your own and package functions), patterns (`x_`), operators and slots. It paints once when a cell
 changes instead of re-running tree-sitter queries on every redraw, so scrolling stays smooth. The
-colors follow your theme (`WlComment`, `WlString`, `WlNumber`, `WlSystem`, `WlPattern`, `WlOperator`,
+colors follow your theme (`WlComment`, `WlString`, `WlNumber`, `WlSystem`, `WlCall`, `WlPattern`, `WlOperator`,
 `WlSlot` are links to standard groups; override them as usual). To use the tree-sitter colors instead,
 set `vim.g.wlnb_highlight = 'treesitter'` before the plugin loads.
 

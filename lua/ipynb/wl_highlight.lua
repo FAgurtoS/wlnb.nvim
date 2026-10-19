@@ -8,7 +8,7 @@ local ns = vim.api.nvim_create_namespace('wlnb_highlight')
 
 local LINKS = {
   WlComment = 'Comment', WlString = 'String', WlNumber = 'Number', WlSystem = 'Function',
-  WlPattern = 'Special', WlOperator = 'Operator', WlSlot = 'Special',
+  WlPattern = 'Special', WlOperator = 'Operator', WlSlot = 'Special', WlCall = 'Function',
 }
 for group, target in pairs(LINKS) do
   vim.api.nvim_set_hl(0, group, { link = target, default = true })
@@ -102,6 +102,8 @@ function M.tokens(lines)
             e = e2
           elseif is_system(name) then
             add(li, i, e, 'WlSystem')
+          elseif line:sub(e + 1, e + 1) == '[' then
+            add(li, i, e, 'WlCall') -- your own or a package function: any name applied with [
           end
           i = e + 1
         elseif c == '_' then
