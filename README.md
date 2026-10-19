@@ -66,7 +66,7 @@ that looks like the notebook: code in boxes with Wolfram syntax colors, outputs 
 images, markdown cells typeset by pandoc (LaTeX math works), and results as real typeset equations
 (StandardForm look, via `TeXForm` from a throwaway kernel, so it needs one free license slot; without
 one, or for very wide expressions, the InputForm text is printed instead). Long text outputs are cut
-after 40 lines. A `.tex` destination writes the LaTeX source plus an images folder. Needs `pandoc` and
+after 40 lines. A `.tex` destination writes the LaTeX source plus an images folder, and a `.wl` destination writes plain Wolfram code (markdown as comments, no outputs). Needs `pandoc` and
 `xelatex` (TeX Live / MacTeX).
 
 ## Agents (Claude Code and others)
@@ -150,7 +150,7 @@ Code cells are highlighted with the official
 
 - No completion, variable inspector or LSP for Wolfram.
 - Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLNB_RENDER_MATH=0` to turn rendering off, or `WLNB_MATH_STYLE=light` (black on white) / `dark` (Wolfram's dark box) instead of the default transparent background with light text.
-- Plot images are saved on `:w` to `<notebook>.assets/<hash>.png` and the file holds only `(* -Graphics- <hash> *)`. Copy the `.assets` folder together with the notebook. If the code above a plot changed since it ran, the output shows `[stale]`. `:NotebookCleanAssets` deletes PNGs no marker references (run it after saving).
+- Plot and result images are embedded at the end of the `.wlnb` (one `(* ::assets:: *)` section), so a notebook is always a single file you can copy anywhere; old notebooks with a `<notebook>.assets` folder are migrated when you save. If the code above a plot changed since it ran, the output shows `[stale]`. See [FORMAT.md](FORMAT.md).
 
 ---
 

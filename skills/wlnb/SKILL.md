@@ -8,7 +8,7 @@ description: Edit and run a Wolfram Language notebook (.wlnb) that is open in Ne
 A `.wlnb` file is plain text and a valid `.wl` file. Cells are separated by marker comments:
 
 ```
-(* ::wlnb:: v0 *)
+(* ::wlnb:: v1 *)
 
 (* ::cell:: input *)
 Integrate[Sin[x]^2, x]
@@ -22,7 +22,7 @@ Integrate[Sin[x]^2, x]
 
 - `input` is Wolfram code. An `output` belongs to the input right above it and is InputForm text in one comment.
 - `markdown` and `raw` bodies are wrapped in one comment (`(*` is written `(\*`, `*)` is written `*\)`).
-- Plot outputs are `(* -Graphics- <hash> *)`; the PNG lives in `<notebook>.assets/<hash>.png`. Never edit these by hand.
+- Images are embedded in one section at the end of the file, starting at the line `(* ::assets:: *)` (base64 PNG, long lines). Outputs refer to them as `(* -Graphics- <hash> *)` or a last `-Rendered- <hash>` line. Never edit them by hand and skip that section when reading: everything above it is the whole notebook.
 - Full spec: `FORMAT.md` in the wlnb.nvim repository (`~/wlnb.nvim`).
 
 ## Two ways to work
@@ -51,6 +51,10 @@ Rules:
 - If it says the license limit was reached (the free Wolfram Engine allows 2 kernels; WLJS kernels count), ask the user to stop a kernel (`:NotebookKernels` in Neovim, or in WLJS); do not kill processes yourself.
 - If no running Neovim has the notebook, the script says so: fall back to way 1 or ask the user to open it.
 - Avoid `Print` in cells you write (its text is merged into the output); prefer returning values.
+
+## Plain .wl and PDF
+
+`~/wlnb.nvim/scripts/wlnb-export notebook.wlnb out.wl` writes just the code (markdown as comments, no outputs); `out.pdf` builds a PDF (needs pandoc and xelatex).
 
 ## Converting
 

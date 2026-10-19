@@ -58,6 +58,17 @@ h.run_test('export_writes_tex_with_images_folder', function()
   vim.fn.delete(dest:gsub('%.tex$', '') .. '_files', 'rf')
 end)
 
+h.run_test('wl_export_is_code_with_comments_and_no_outputs', function()
+  local dest = vim.fn.tempname() .. '.wl'
+  local cells = {
+    { type = 'markdown', source = '# Title (* x *)', metadata = {} },
+    cell('x = 5;\nx^2', { result('25', false) }),
+  }
+  h.assert_eq(export.export(cells, dest), dest)
+  h.assert_eq(table.concat(vim.fn.readfile(dest), '\n'), '(* # Title (\\* x *\\) *)\n\nx = 5;\nx^2')
+  vim.fn.delete(dest)
+end)
+
 local success = h.summary()
 if success then
   vim.cmd('qa!')

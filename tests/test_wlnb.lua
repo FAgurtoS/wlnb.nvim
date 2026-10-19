@@ -83,7 +83,7 @@ h.run_test('yank_output_copies_cell_output_to_register', function()
   h.assert_eq(vim.fn.getreg('"'), 'x/2 - Sin[2 x]/4')
 end)
 
-h.run_test('graphics_are_saved_to_assets_and_reloaded_with_stale_detection', function()
+h.run_test('graphics_are_embedded_and_reloaded_with_stale_detection', function()
   local png = vim.base64.encode('\137PNG fake image bytes')
   local function plot_cell(src)
     return {
@@ -94,29 +94,50 @@ h.run_test('graphics_are_saved_to_assets_and_reloaded_with_stale_detection', fun
   local tmp = vim.fn.tempname() .. '.wlnb'
   wlnb.write(tmp, { plot_cell('Plot[x, {x, 0, 1}]') })
   local lines = vim.fn.readfile(tmp)
-  local hash = lines[#lines]:match('^%(%* %-Graphics%- (%x+) %*%)$')
+  local text = table.concat(lines, '\n')
+  local hash = text:match('%(%* %-Graphics%- (%x+) %*%)')
   h.assert_true(hash ~= nil, 'marker has a hash')
-  h.assert_eq(vim.fn.filereadable(tmp .. '.assets/' .. hash .. '.png'), 1)
-  -- Reload: image restored, not stale, and a second save keeps the same marker
+  h.assert_true(text:find('(* ::assets:: *)', 1, true) ~= nil, 'assets section present')
+  h.assert_true(text:find('(* ::asset:: ' .. hash .. ' png *)', 1, true) ~= nil, 'image embedded')
+  h.assert_eq(vim.fn.isdirectory(tmp .. '.assets'), 0) -- no folder next to the file
+  -- Reload: image restored, not stale, and a second save is byte-identical
   local cells = wlnb.read(tmp)
   h.assert_eq(cells[1].outputs[1].data['image/png'], png)
   h.assert_eq(cells[1].outputs[1].data['text/plain'], '-Graphics-')
+  h.assert_eq(#cells, 1) -- the assets section is not a cell
   wlnb.write(tmp, cells)
-  h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), table.concat(lines, '\n'))
-  -- Edit the code: the image is stale and keeps pointing at its old PNG
+  h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), text)
+  -- Edit the code: the image is stale and keeps its original hash
   local edited = vim.fn.readfile(tmp)
   edited[4] = 'Plot[2 x, {x, 0, 1}]'
   vim.fn.writefile(edited, tmp)
   cells = wlnb.read(tmp)
   h.assert_eq(cells[1].outputs[1].data['text/plain'], '-Graphics- [stale]')
   wlnb.write(tmp, cells)
-  h.assert_eq(vim.fn.readfile(tmp)[#lines], lines[#lines])
-  -- The old PNG is still referenced; an unreferenced one is removed
-  vim.fn.writefile({ 'x' }, tmp .. '.assets/deadbeef0000.png')
-  h.assert_eq(wlnb.clean_assets(tmp), 1)
-  h.assert_eq(vim.fn.filereadable(tmp .. '.assets/' .. hash .. '.png'), 1)
+  h.assert_true(table.concat(vim.fn.readfile(tmp), '\n'):find('-Graphics- ' .. hash, 1, true) ~= nil, 'hash kept')
   vim.fn.delete(tmp)
-  vim.fn.delete(tmp .. '.assets', 'rf')
+end)
+
+h.run_test('old_files_with_an_assets_folder_are_migrated_on_save', function()
+  local tmp = vim.fn.tempname() .. '.wlnb'
+  vim.fn.mkdir(tmp .. '.assets', 'p')
+  local f = io.open(tmp .. '.assets/abcdef012345.png', 'wb')
+  f:write('\137PNG old')
+  f:close()
+  vim.fn.writefile({ '(* ::wlnb:: v0 *)', '', '(* ::cell:: input *)', 'Plot[x]', '', '(* ::cell:: output *)', '(* -Graphics- abcdef012345 *)' }, tmp)
+  local cells = wlnb.read(tmp)
+  h.assert_eq(cells[1].outputs[1].data['image/png'], vim.base64.encode('\137PNG old'))
+  wlnb.write(tmp, cells)
+  h.assert_eq(vim.fn.isdirectory(tmp .. '.assets'), 0)
+  h.assert_eq(wlnb.read(tmp)[1].outputs[1].data['image/png'], vim.base64.encode('\137PNG old'))
+  vim.fn.delete(tmp)
+end)
+
+h.run_test('info_boxes_keep_text_only', function()
+  local cell = { id = 'a', type = 'code', source = '?Series', metadata = {},
+    outputs = { { output_type = 'execute_result', data = { ['text/plain'] = 'InformationData[<|"x" -> 1|>]', ['image/png'] = vim.base64.encode('big') }, metadata = {} } } }
+  local text = table.concat(wlnb.serialize({ cell }), '\n')
+  h.assert_true(text:find('::assets::', 1, true) == nil and text:find('-Rendered-', 1, true) == nil, 'no image stored')
 end)
 
 h.run_test('rendered_math_keeps_inputform_text_and_png', function()
@@ -133,7 +154,6 @@ h.run_test('rendered_math_keeps_inputform_text_and_png', function()
   wlnb.write(tmp, cells)
   h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), first)
   vim.fn.delete(tmp)
-  vim.fn.delete(tmp .. '.assets', 'rf')
 end)
 
 local success = h.summary()

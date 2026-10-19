@@ -11,17 +11,33 @@ Plain text. A valid `.wl` file: every marker is a Wolfram comment.
   `(* ... *)`, content in InputForm. Any `*)` inside is escaped as `*\)`.
 - `markdown` and `raw`: body wrapped in ONE comment `(* ... *)`. Inside, `(*` is escaped as `(\*` and `*)` as `*\)`.
 - Canonical layout: header, blank line, cells separated by one blank line, single newline at EOF.
-- Optional header on line 1: `(* ::wlnb:: v0 *)`.
+- Optional header on line 1: `(* ::wlnb:: v1 *)`.
 - No ids, no absolute paths, no UI state.
 
 ## Decisions
-- Images are NOT stored in the file. Plot outputs are written as `(* -Graphics- <hash> *)`.
-- Every result also gets a StandardForm PNG: the output body is the InputForm text followed by a last line `-Rendered- <hash>` (hash of the PNG bytes). The text is what gets copied; the image is only for viewing. Disable with env `WLNB_RENDER_MATH=0`.
-- Portable: PNGs live in `<notebook>.assets/<hash>.png` next to the file and are versioned/copied with it.
-- `<hash>` = hash of the cell code plus ALL previous input cells, in order (chained hash).
-- On open, the marker names the PNG; it is always shown. If the cell's current chained hash differs from `<hash>`, it is shown dimmed with an `[stale]` label.
-- Orphan PNGs (referenced by no marker) are removed by a cleanup command.
-- Explicit exports (`Export[...]` in an input cell) are independent of this folder.
+- Images are embedded in the same file, in one section at the very end, so the notebook is always a single portable file:
+
+  ```
+  (* ::assets:: *)
+  (* Embedded images (base64 PNG) for the outputs above. Safe to delete: outputs fall back to text. *)
+
+  (* ::asset:: 34a1aa3b44c5 png *)
+  (*
+  iVBORw0KGgoAAAANSUhEUgAA... (76 columns)
+  *)
+  ```
+
+  The cells above never contain image data: a plot output is `(* -Graphics- <hash> *)`, and a rendered
+  result is its InputForm text followed by a last line `-Rendered- <hash>` (hash of the PNG bytes;
+  the text is what gets copied, the image is only for viewing). Everything from the `::assets::` line
+  on can be cut with no loss of code; ?Symbol info panels are never embedded.
+- Plot `<hash>` = hash of the cell code plus ALL previous input cells, in order (chained hash). If the
+  cell's chained hash differs from the marker, the image is shown with a `[stale]` label.
+- Plain `.wl`: `:NotebookExport x.wl` (or `scripts/wlnb-export nb.wlnb x.wl`) writes the code cells as
+  they are and markdown/raw cells as comments, without outputs.
+- v0 files (images in `<notebook>.assets/<hash>.png`) are still read; saving embeds the images and
+  removes that folder.
+- Explicit exports (`Export[...]` in an input cell) are independent of this.
 - No cell ids: order is implicit (an `output` belongs to the `input` right above it).
   May be added later as an optional `id=` attribute without breaking old files.
 

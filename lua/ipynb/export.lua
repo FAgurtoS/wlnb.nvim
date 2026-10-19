@@ -187,12 +187,35 @@ function M.to_tex(cells, opts)
   return table.concat(parts, '\n')
 end
 
----Export cells to `dest` (.pdf, or .tex which is written next to its images folder)
+---Plain Wolfram script: code cells as they are, markdown and raw cells as comments, no outputs.
+---@param cells Cell[]
+---@return string[]
+function M.to_wl(cells)
+  local out = {}
+  for _, cell in ipairs(cells) do
+    local body = cell.source
+    if cell.type ~= 'code' then
+      body = '(* ' .. body:gsub('%(%*', '(\\*'):gsub('%*%)', '*\\)') .. ' *)'
+    end
+    vim.list_extend(out, vim.split(body, '\n', { plain = true }))
+    table.insert(out, '')
+  end
+  if #out > 0 then
+    table.remove(out)
+  end
+  return out
+end
+
+---Export cells to `dest`: .pdf, .tex (next to its images folder) or .wl (code only)
 ---@param cells Cell[]
 ---@param dest string
 ---@param title string|nil
 ---@return string|nil dest, string|nil err
 function M.export(cells, dest, title)
+  if dest:match('%.wls?$') then
+    vim.fn.writefile(M.to_wl(cells), dest)
+    return dest
+  end
   local as_tex = dest:match('%.tex$') ~= nil
   local dir = as_tex and (dest:gsub('%.tex$', '') .. '_files') or vim.fn.tempname()
   vim.fn.mkdir(dir, 'p')

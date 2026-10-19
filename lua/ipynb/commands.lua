@@ -255,16 +255,6 @@ function M.setup_buffer(state)
     output.yank_output(state)
   end, { desc = 'Copy current cell output to the clipboard' })
 
-  vim.api.nvim_buf_create_user_command(buf, 'NotebookCleanAssets', function()
-    local path = vim.api.nvim_buf_get_name(buf)
-    if not path:match('%.wlnb$') then
-      vim.notify('Not a .wlnb notebook', vim.log.levels.WARN)
-      return
-    end
-    local removed = require('ipynb.wlnb').clean_assets(path)
-    vim.notify(('Removed %d unused image(s)'):format(removed))
-  end, { desc = 'Delete PNGs in <notebook>.assets that the saved file no longer references' })
-
   vim.api.nvim_buf_create_user_command(buf, 'NotebookClearOutput', function()
     keymaps.clear_output(state)
   end, { desc = 'Clear current cell output' })
