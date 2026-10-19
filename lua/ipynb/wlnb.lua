@@ -282,10 +282,14 @@ function M.write(path, cells)
   -- Old files kept images in <notebook>.assets; they are embedded now, so the folder is obsolete
   local dir = M.assets_dir(path)
   if vim.fn.isdirectory(dir) == 1 then
-    for _, file in ipairs(vim.fn.glob(dir .. '/*.png', false, true)) do
-      vim.fn.delete(file)
+    local entries = vim.fn.readdir(dir)
+    local only_ours = true
+    for _, name in ipairs(entries) do
+      only_ours = only_ours and (name:match('%.png$') ~= nil or name == '.gitkeep' or name == '.DS_Store')
     end
-    vim.fn.delete(dir, 'd') -- only succeeds when empty
+    if only_ours then -- never remove a folder that holds anything else
+      vim.fn.delete(dir, 'rf')
+    end
   end
 end
 
