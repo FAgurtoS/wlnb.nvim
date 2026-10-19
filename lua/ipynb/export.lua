@@ -56,18 +56,22 @@ local function output_parts(out)
 end
 
 
-local TEX_CODE = [==[
+local TYPESET_CODE = [==[
 strs = Import[%q, "RawJSON"];
-conv[s_String] := Quiet[Check[ToString[ToExpression[s, InputForm, HoldForm], TeXForm], ""]];
-WriteString["stdout", "@@TEX@@" <> ExportString[conv /@ strs, "RawJSON", "Compact" -> True]];
+tex[s_String] := Quiet[Check[ToString[ToExpression[s, InputForm, HoldForm], TeXForm], ""]];
+png[s_String] := Quiet[Check[TimeConstrained[BaseEncode[ExportByteArray[Rasterize[
+   Style[ToExpression[s, InputForm, HoldForm], FontColor -> Black], Background -> White, ImageResolution -> 220], "PNG"]], 30, ""], ""]];
+WriteString["stdout", "@@TYPESET@@" <> ExportString[%s /@ strs, "RawJSON", "Compact" -> True]];
 Exit[]
 ]==]
 
----Typeset InputForm texts as LaTeX with one throwaway kernel (StandardForm look: real equations).
----Returns a table index -> TeX string; texts that fail or are too wide are simply missing.
+---Typeset InputForm texts with one throwaway kernel. mode "image" (default, the StandardForm look of
+---the notebook in black on white) gives base64 PNGs; "tex" gives LaTeX equations.
+---Returns index -> { png = base64 } | { tex = string }; texts that fail are simply missing.
 ---@param texts string[]
----@return table<integer, string>
-local function tex_forms(texts)
+---@param mode string
+---@return table<integer, table>
+local function typeset(texts, mode)
   local result = {}
   if #texts == 0 then
     return result
@@ -78,13 +82,18 @@ local function tex_forms(texts)
   end
   local file = vim.fn.tempname() .. '.json'
   vim.fn.writefile({ vim.json.encode(texts) }, file)
-  local out = vim.system({ kernel, '-noprompt', '-run', TEX_CODE:format(file) }, { text = true }):wait()
+  local fn = mode == 'tex' and 'tex' or 'png'
+  local out = vim.system({ kernel, '-noprompt', '-run', TYPESET_CODE:format(file, fn) }, { text = true }):wait()
   vim.fn.delete(file)
-  local json = (out.stdout or ''):match('@@TEX@@(%b[])')
+  local json = (out.stdout or ''):match('@@TYPESET@@(%b[])')
   if json then
-    for i, tex in ipairs(vim.json.decode(json)) do
-      if type(tex) == 'string' and tex ~= '' and #tex <= 700 and not tex:find('\\n') then
-        result[i] = tex
+    for i, v in ipairs(vim.json.decode(json)) do
+      if type(v) == 'string' and v ~= '' then
+        if fn == 'png' then
+          result[i] = { png = v }
+        elseif #v <= 700 and not v:find('\n') then
+          result[i] = { tex = v }
+        end
       end
     end
   end
@@ -93,6 +102,11 @@ end
 
 local function is_graphics(text)
   return text and (text:match('^%-Graphics%-') or text:match('^%-Image%-'))
+end
+
+-- ?Symbol answers are native Wolfram info panels: keep the image the kernel drew, as in Neovim
+local function is_info_box(text)
+  return text and text:match('^InformationData%[') ~= nil
 end
 
 local function markdown_to_latex(md)
@@ -116,7 +130,7 @@ end
 
 ---Build the LaTeX source. PNG outputs are written into `dir`.
 ---@param cells Cell[]
----@param opts { title: string|nil, dir: string, max_output_lines: integer|nil }
+---@param opts { title: string|nil, dir: string, max_output_lines: integer|nil, math: string|nil, typeset: table|nil }
 ---@return string
 function M.to_tex(cells, opts)
   local max = opts.max_output_lines or 40
@@ -126,18 +140,27 @@ function M.to_tex(cells, opts)
     table.insert(parts, ('{\\Large\\bfseries %s}\\par\\vspace{4pt}\\hrule\\vspace{8pt}\n'):format(title))
   end
   local image_n = 0
-  -- Rendered results (text + PNG): typeset them as equations instead of pasting the dark PNG
+  -- Rendered results (text + PNG): redraw them black on white instead of pasting the light-on-dark PNG
   local math_texts, math_index = {}, {}
   for ci, cell in ipairs(cells) do
     for oi, out in ipairs(cell.type == 'code' and cell.outputs or {}) do
       local png, text = output_parts(out)
-      if png and text and not is_graphics(text) then
+      if png and text and not is_graphics(text) and not is_info_box(text) then
         table.insert(math_texts, text)
         math_index[ci .. ':' .. oi] = #math_texts
       end
     end
   end
-  local tex_of = opts.tex_forms or tex_forms(math_texts)
+  local typeset_of = opts.typeset or typeset(math_texts, opts.math or os.getenv('WLNB_EXPORT_MATH') or 'image')
+  local function save_png(b64)
+    image_n = image_n + 1
+    local name = ('img%d.png'):format(image_n)
+    local f = assert(io.open(opts.dir .. '/' .. name, 'wb'))
+    f:write(vim.base64.decode((b64:gsub('%s', ''))))
+    f:close()
+    return name
+  end
+  local OUT_LABEL = '{\\scriptsize\\color{outline}Out:}\\par\\smallskip\n'
   for ci, cell in ipairs(cells) do
     if cell.type == 'markdown' then
       table.insert(parts, markdown_to_latex(cell.source))
@@ -147,18 +170,15 @@ function M.to_tex(cells, opts)
       table.insert(parts, '\\begin{codecell}\n\\begin{lstlisting}[style=wl]\n' .. cell.source .. '\n\\end{lstlisting}\n\\end{codecell}\n')
       for oi, out in ipairs(cell.outputs or {}) do
         local png, text = output_parts(out)
-        local tex = math_index[ci .. ':' .. oi] and tex_of[math_index[ci .. ':' .. oi]]
-        if tex then
-          table.insert(parts, '\\begin{outcell}\n\\[ ' .. tex .. ' \\]\n\\end{outcell}\n')
-        elseif png and is_graphics(text) then
-          image_n = image_n + 1
-          local name = ('img%d.png'):format(image_n)
-          local f = assert(io.open(opts.dir .. '/' .. name, 'wb'))
-          f:write(vim.base64.decode((png:gsub('%s', ''))))
-          f:close()
-          table.insert(parts, ('\\begin{outcell}\n\\includegraphics[max width=\\linewidth,max height=0.45\\textheight]{%s}\n\\end{outcell}\n'):format(name))
+        local typed = math_index[ci .. ':' .. oi] and typeset_of[math_index[ci .. ':' .. oi]]
+        if typed and typed.tex then
+          table.insert(parts, '\\begin{outcell}\n' .. OUT_LABEL .. '\\[ ' .. typed.tex .. ' \\]\n\\end{outcell}\n')
+        elseif typed and typed.png then
+          table.insert(parts, ('\\begin{outcell}\n%s\\includegraphics[max width=\\linewidth]{%s}\n\\end{outcell}\n'):format(OUT_LABEL, save_png(typed.png)))
+        elseif png and (is_graphics(text) or is_info_box(text)) then
+          table.insert(parts, ('\\begin{outcell}\n\\includegraphics[max width=\\linewidth,max height=0.45\\textheight]{%s}\n\\end{outcell}\n'):format(save_png(png)))
         elseif text and text ~= '' and not is_graphics(text) then
-          table.insert(parts, '\\begin{outcell}\n\\begin{lstlisting}[style=out]\n' .. truncate(text, max) .. '\n\\end{lstlisting}\n\\end{outcell}\n')
+          table.insert(parts, '\\begin{outcell}\n' .. OUT_LABEL .. '\\begin{lstlisting}[style=out]\n' .. truncate(text, max) .. '\n\\end{lstlisting}\n\\end{outcell}\n')
         end
       end
     end

@@ -38,6 +38,7 @@ MATH_STYLE = os.environ.get("WLNB_MATH_STYLE", "transparent")
 INIT_CODE = (
     '$WLNBRenderMath = ' + ('True' if RENDER_MATH else 'False') + '; '
     '$WLNBMathStyle = "' + MATH_STYLE + '"; '
+    '$WLNBRaster[x_InformationData] := Rasterize[x, ImageResolution -> 144]; '
     '$WLNBRaster[x_] := Switch[$WLNBMathStyle, '
     '"light", Rasterize[Style[x, FontColor -> Black], Background -> White, ImageResolution -> 144], '
     '"dark", Rasterize[x, ImageResolution -> 144], '

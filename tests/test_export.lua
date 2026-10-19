@@ -31,12 +31,17 @@ h.run_test('tex_has_boxes_equations_images_and_truncation', function()
     cell('Plot[x, {x, 0, 1}]', { result('-Graphics-', true) }),
     cell('Do[...]', { result(table.concat(long, '\n'), false) }),
   }
-  local tex = export.to_tex(cells, { dir = dir, tex_forms = { [1] = '\\frac{x^3}{3}' }, max_output_lines = 40 })
+  local tex = export.to_tex(cells, { dir = dir, typeset = { [1] = { tex = '\\frac{x^3}{3}' } }, max_output_lines = 40 })
   h.assert_true(tex:find('\\begin{codecell}', 1, true) ~= nil, 'code box')
   h.assert_true(tex:find('language=Mathematica', 1, true) ~= nil, 'syntax style')
   h.assert_true(tex:find('\\[ \\frac{x^3}{3} \\]', 1, true) ~= nil, 'equation instead of the dark PNG')
   h.assert_true(tex:find('img1.png', 1, true) ~= nil and vim.fn.filereadable(dir .. '/img1.png') == 1, 'plot image written')
-  h.assert_true(tex:find('img2.png', 1, true) == nil, 'math result is not an image')
+  h.assert_true(tex:find('img2.png', 1, true) == nil, 'math result typeset as TeX is not an image')
+  h.assert_true(tex:find('Out:', 1, true) ~= nil, 'results keep the Out: label')
+  -- image mode: the black-on-white StandardForm PNG is embedded
+  local tex2 = export.to_tex({ cell('Integrate[x^2, x]', { result('x^3/3', true) }) },
+    { dir = dir, typeset = { [1] = { png = png } } })
+  h.assert_true(tex2:find('includegraphics', 1, true) ~= nil and tex2:find('Out:', 1, true) ~= nil, 'image result')
   h.assert_true(tex:find('20 more lines not shown', 1, true) ~= nil, 'long output truncated')
   h.assert_true(tex:find('\\section', 1, true) ~= nil or tex:find('Title', 1, true) ~= nil, 'markdown converted')
   vim.fn.delete(dir, 'rf')
