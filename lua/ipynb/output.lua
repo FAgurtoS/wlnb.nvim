@@ -136,7 +136,13 @@ function M.render_output(output)
     if has_image then
       -- Image will be rendered by snacks.nvim if available, skip text here to avoid extmark conflict
       if not images_mod.is_available() then
-        table.insert(lines, { { '[Image output - install snacks.nvim to view]', 'Comment' } })
+        local text = output.data and output.data['text/plain']
+        if type(text) == 'string' and not text:match('^%-Graphics%-') and not text:match('^%-Image%-') then
+          -- Rendered math: the InputForm text is the readable fallback
+          add_text_plain_lines(lines, text, 'Out: ', 'IpynbOutput')
+        else
+          table.insert(lines, { { '[Image output - install snacks.nvim to view]', 'Comment' } })
+        end
       end
     else
       if output.data and output.data['text/plain'] then

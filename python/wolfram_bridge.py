@@ -31,7 +31,10 @@ FORMAT_CODE = (
     'StartOfString ~~ "HoldCompleteForm[" ~~ s__ ~~ "]" ~~ EndOfString :> s] &);'
 )
 
+RENDER_MATH = os.environ.get("WLN_RENDER_MATH", "1") != "0"
+
 INIT_CODE = (
+    '$WLNBRenderMath = ' + ('True' if RENDER_MATH else 'False') + '; '
     '$WLNBRun[b64_String, tag_String] := Module[{code, res, text, png = ""}, '
     'WriteString["stdout", "' + MARK + 'START@@" <> tag <> "\\n"]; '
     'code = ByteArrayToString[BaseDecode[b64]]; '
@@ -40,7 +43,10 @@ INIT_CODE = (
     'If[MatchQ[res, _Graphics | _Graphics3D | _Image | _Legended], '
     'text = If[ImageQ[res], "-Image-", "-Graphics-"]; '
     'png = Quiet[Check[BaseEncode[ExportByteArray[res, "PNG"]], ""]], '
-    'text = ToString[res, InputForm, PageWidth -> Infinity]]; '
+    'text = ToString[res, InputForm, PageWidth -> Infinity]; '
+    'If[$WLNBRenderMath && LeafCount[res] < 3000 && !FreeQ[res, _Power | _Rational | _Integrate | _Sum | _Product | _SeriesData | _Piecewise | _Derivative | _Sqrt] || '
+    '$WLNBRenderMath && MatrixQ[res] && LeafCount[res] < 3000, '
+    'png = Quiet[Check[TimeConstrained[BaseEncode[ExportByteArray[Rasterize[res, ImageResolution -> 144], "PNG"]], 10, ""], ""]]]]; '
     'WriteString["stdout", "' + MARK + 'RES@@" <> tag <> "@@" <> '
     'ExportString[<|"text" -> text, "png" -> png|>, "RawJSON", "Compact" -> True] <> "\\n"]]; '
     'WriteString["stdout", "' + MARK + 'DONE@@" <> tag <> "\\n"]; Null];'

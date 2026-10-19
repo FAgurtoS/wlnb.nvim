@@ -95,7 +95,16 @@ function M.parse(lines, path)
         local out_text = unwrap_comment(text)
         local data = { ['text/plain'] = out_text }
         local hash = out_text:match('^%-Graphics%- (%x+)$')
-        if hash then
+        local body, rhash = out_text:match('^(.*)\n%-Rendered%- (%x+)$')
+        if rhash then
+          -- Rendered math: InputForm text plus a PNG of the StandardForm
+          data['text/plain'] = body
+          local file = path and io.open(M.assets_dir(path) .. '/' .. rhash .. '.png', 'rb')
+          if file then
+            data['image/png'] = vim.base64.encode(file:read('*a'))
+            file:close()
+          end
+        elseif hash then
           data['text/plain'] = '-Graphics-'
           local file = path and io.open(M.assets_dir(path) .. '/' .. hash .. '.png', 'rb')
           if file then
@@ -176,6 +185,9 @@ function M.serialize(cells, path)
         if png and path then
           -- Keep the hash the marker already carries when the image was loaded from disk
           local hash = out.metadata and out.metadata.wlnb_hash or chain
+          if not (text and (text:match('^%-Graphics%-') or text:match('^%-Image%-'))) then
+            hash = vim.fn.sha256(vim.base64.decode((png:gsub('%s', '')))):sub(1, 12) -- rendered math: hash of the image bytes
+          end
           local dir = M.assets_dir(path)
           local file = dir .. '/' .. hash .. '.png'
           if vim.fn.filereadable(file) == 0 then
@@ -186,7 +198,11 @@ function M.serialize(cells, path)
               f:close()
             end
           end
-          text = GRAPHICS_PREFIX .. hash
+          if text and text:match('^%-Graphics%-') or text and text:match('^%-Image%-') then
+            text = GRAPHICS_PREFIX .. hash
+          else
+            text = text .. '\n-Rendered- ' .. hash
+          end
         end
         if text then
           add('output', wrap_comment(text))

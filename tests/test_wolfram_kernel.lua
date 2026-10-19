@@ -31,6 +31,12 @@ vim.fn.writefile({
   '',
   '(* ::cell:: input *)',
   'x + 1',
+  '',
+  '(* ::cell:: input *)',
+  'Sqrt[a^2 + b^2]/(2 c)',
+  '',
+  '(* ::cell:: input *)',
+  'Range[3]',
 }, tmp)
 -- One sequential test: run_test closes all notebooks between tests, and the kernel is slow to start.
 local function output_text(cell)
@@ -90,6 +96,14 @@ h.run_test('wolfram_kernel_end_to_end', function()
   end, 200), 'kernel did not come back after restart')
   local t4 = run(3)
   h.assert_true(t4:find('1 + x', 1, true) ~= nil, 'x should be undefined after restart: ' .. t4)
+
+  -- structured results get a StandardForm PNG next to the InputForm text; plain ones do not
+  local t5 = run(4)
+  local d = state.cells[4].outputs[1].data
+  h.assert_true(d['image/png'] ~= nil and #d['image/png'] > 100, 'rendered math PNG missing')
+  h.assert_true(t5:find('Sqrt[a^2 + b^2]', 1, true) ~= nil, 'InputForm text kept: ' .. t5)
+  run(5)
+  h.assert_true(state.cells[5].outputs[1].data['image/png'] == nil, 'plain list must not be rendered')
 
   -- closing the notebook must stop its kernel (it would hold a license slot otherwise)
   local pid

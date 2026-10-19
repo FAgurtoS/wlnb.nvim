@@ -119,6 +119,23 @@ h.run_test('graphics_are_saved_to_assets_and_reloaded_with_stale_detection', fun
   vim.fn.delete(tmp .. '.assets', 'rf')
 end)
 
+h.run_test('rendered_math_keeps_inputform_text_and_png', function()
+  local png = vim.base64.encode('\137PNG math image')
+  local cell = { id = 'a', type = 'code', source = 'Sqrt[a^2]/2', metadata = {},
+    outputs = { { output_type = 'execute_result', data = { ['text/plain'] = 'Sqrt[a^2]/2', ['image/png'] = png }, metadata = {} } } }
+  local tmp = vim.fn.tempname() .. '.wlnb'
+  wlnb.write(tmp, { cell })
+  local first = table.concat(vim.fn.readfile(tmp), '\n')
+  h.assert_true(first:match('%(%* Sqrt%[a%^2%]/2\n%-Rendered%- %x+ %*%)') ~= nil, 'marker follows the text')
+  local cells = wlnb.read(tmp)
+  h.assert_eq(cells[1].outputs[1].data['text/plain'], 'Sqrt[a^2]/2')
+  h.assert_eq(cells[1].outputs[1].data['image/png'], png)
+  wlnb.write(tmp, cells)
+  h.assert_eq(table.concat(vim.fn.readfile(tmp), '\n'), first)
+  vim.fn.delete(tmp)
+  vim.fn.delete(tmp .. '.assets', 'rf')
+end)
+
 local success = h.summary()
 if success then
   vim.cmd('qa!')
