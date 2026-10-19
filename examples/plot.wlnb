@@ -7,13 +7,14 @@ Plot[Sin[x], {x, 0, 2 Pi}]
 (* -Graphics- 34a1aa3b44c5 *)
 
 (* ::cell:: input *)
-f[x] = 1-2*M/r^2
-
-(* ::cell:: output *)
-(* 1 - (2*M)/r^2 *)
+f[r_] := 1-2*M/r^2
 
 (* ::cell:: input *)
-r = 2M
+f[r]
 
 (* ::cell:: output *)
-(* 2*M *)
+(* 1 - (2*M)/r^2
+-Rendered- 7dad6dd770df *)
+
+(* ::cell:: input *)
+

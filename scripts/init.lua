@@ -23,6 +23,7 @@ function _G.WlnKernel()
   local hl = ({ ready = 'DiagnosticOk', busy = 'DiagnosticWarn' })[ok and hl_state or ''] or 'Comment'
   return ('%%#%s#Kernels %s/%s%%*'):format(hl, count or '?', max or '?')
 end
+vim.o.clipboard = 'unnamedplus' -- y copies to the system clipboard too
 vim.o.laststatus = 2
 vim.o.statusline = '%f %m%= %{%v:lua.WlnKernel()%} '
 
