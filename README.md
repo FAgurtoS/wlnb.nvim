@@ -28,9 +28,26 @@ PATH=$PWD/scripts/zig-cc:$PATH nvim --headless -u tests/minimal_init.lua -l test
 ./scripts/wln examples/basic.wlnb
 ```
 
-`scripts/wln` is a shell command (run it in a terminal, not from a file manager such as ranger,
-which would open the file with your normal Neovim without the plugin). It uses
-`scripts/init.lua`. Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
+`scripts/wln` is a throwaway launcher with a clean config (`scripts/init.lua`). To use the plugin in
+your own Neovim, so that any `.wlnb` (for example opened from ranger) loads as cells, add it as a
+local plugin (lazy.nvim):
+
+```lua
+{
+  dir = vim.fn.expand('~/wln.nvim'),
+  name = 'wln.nvim',
+  main = 'ipynb',
+  dependencies = { 'nvim-treesitter/nvim-treesitter', 'neovim/nvim-lspconfig' },
+  -- optional: put zig-cc first on PATH if you have no working C compiler
+  init = function() vim.env.PATH = vim.fn.expand('~/wln.nvim/scripts/zig-cc:') .. vim.env.PATH end,
+  opts = {},
+},
+{ 'folke/snacks.nvim', opts = { image = { enabled = true } } }, -- inline images
+```
+
+The parser compiles on first load; the first open may print a tree-sitter error, reopen the file.
+A status line component is available as `require('ipynb.kernels').status()` (returns text and a
+highlight group). Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
 ## Using a notebook
 
