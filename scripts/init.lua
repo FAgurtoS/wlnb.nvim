@@ -24,22 +24,4 @@ vim.o.clipboard = 'unnamedplus' -- y copies to the system clipboard too
 vim.o.laststatus = 2
 vim.o.statusline = '%f %m%= %{%v:lua.WlnKernel()%} '
 
-vim.g.mapleader = ' '
-require('ipynb').setup({
-  -- Easier keys for the try-it launcher: Space + one letter
-  keymaps = {
-    add_cell_below = '<leader>b',
-    add_cell_above = '<leader>a',
-    kernel_start = '<leader>s',
-    menu_execute_cell = '<leader>r',
-    menu_execute_and_next = '<leader>R',
-    open_output = '<leader>o',
-    yank_output = '<leader>y',
-    output_panel = '<leader>p',
-    kernel_list = '<leader>K',
-    kernel_shutdown = '<leader>x',
-    kernel_restart = '<leader>X',
-    make_markdown = '<leader>m',
-    make_code = '<leader>c',
-  },
-})
+require('ipynb').setup({})

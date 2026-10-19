@@ -39,7 +39,7 @@ local function register_which_key()
 
   -- Register with consistent naming (Category + action) for easy scanning
   wk.add({
-    { "<leader>k", group = "notebook", icon = "󰠮" },
+    { ",", group = "notebook", icon = "󰠮" },
     -- Cell operations
     { km.add_cell_above, desc = "Cell add above", icon = "󰐕" },
     { km.add_cell_below, desc = "Cell add below", icon = "󰐕" },
@@ -178,7 +178,7 @@ function M.setup_facade_keymaps(state)
   vim.keymap.set('n', km.interrupt_kernel, interrupt_kernel_cb,
     vim.tbl_extend('force', opts, { desc = 'Kernel interrupt' }))
 
-  -- <leader>k menu - notebook operations
+  -- Comma menu - notebook operations
   vim.keymap.set('n', km.add_cell_above, function()
     M.add_cell_above(state)
   end, vim.tbl_extend('force', opts, { desc = 'Cell add above' }))

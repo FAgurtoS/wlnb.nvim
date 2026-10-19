@@ -30,31 +30,31 @@ PATH=$PWD/scripts/zig-cc:$PATH nvim --headless -u tests/minimal_init.lua -l test
 
 `scripts/wln` is a shell command (run it in a terminal, not from a file manager such as ranger,
 which would open the file with your normal Neovim without the plugin). It uses
-`scripts/init.lua`, which sets the leader key to **Space**.
+`scripts/init.lua`. Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
 ## Using a notebook
 
 Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell for editing
 (*Cell mode*), `Esc` returns to Notebook mode. `:w` saves the `.wlnb` file.
 
-| Action | Keys (launcher) |
+| Action | Keys |
 |---|---|
 | Next / previous cell | `]]` / `[[` |
 | Edit cell / leave cell | `i` or `Enter` / `Esc` |
-| New cell below / above | `Space` `b` / `Space` `a` |
+| New cell below / above | `,b` / `,a` |
 | Cut cell / paste below / paste above | `dd` / `p` / `P` |
 | Delete cell without copying | `:NotebookDeleteCell` |
 | Undo / redo | `u` / `Ctrl-r` |
 | Move cell down / up | `Alt-j` / `Alt-k` |
-| Make cell markdown / code | `Space` `m` / `Space` `c` |
-| Start kernel (about 9 s) | `Space` `s` |
-| Run cell | `Space` `r` |
-| Run cell and go to next | `Space` `R` |
-| Toggle output panel (selectable text) | `Space` `p` (`:NotebookOutputPanel`) |
-| Copy output to the clipboard | `Space` `y` (`:NotebookYankOutput`) |
-| Open output in a float | `Space` `o` |
-| List running Wolfram kernels / stop one | `Space` `K` (`:NotebookKernels`; `j`/`k` select a kernel, `x` stops it, `r` refreshes, `q` closes; no Space needed inside the window) |
-| Stop this notebook's kernel / restart it | `Space` `x` / `Space` `X` |
+| Make cell markdown / code | `,m` / `,c` |
+| Start kernel (about 9 s) | `,s` |
+| Run cell | `,x` |
+| Run cell and go to next | `,X` |
+| Toggle output panel (selectable text) | `,p` (`:NotebookOutputPanel`) |
+| Copy output to the clipboard | `,y` (`:NotebookYankOutput`) |
+| Open output in a float | `,o` |
+| List running Wolfram kernels / stop one | `,k` (`:NotebookKernels`; `j`/`k` select a kernel, `x` stops it, `r` refreshes, `q` closes; no prefix needed inside the window) |
+| Stop this notebook's kernel / restart it | `,q` / `,r` |
 | Interrupt (kills and restarts the kernel) | `Ctrl-c` |
 
 The launcher's status line shows `Kernels n/max`: kernels running on the machine against the license
@@ -66,7 +66,7 @@ variables are lost (a piped `WolframKernel` dies on SIGINT).
 
 The `Alt` keymaps need the terminal to send Option as Alt, which on some keyboard layouts (e.g.
 Spanish) stops Option from typing `[ ] { } \\ |`. If that affects you, leave it off and use the
-Space keymaps and the `:Notebook...` commands instead.
+comma keymaps and the `:Notebook...` commands instead.
 
 ## Images
 
@@ -76,9 +76,9 @@ needs [snacks.nvim](https://github.com/folke/snacks.nvim) (the launcher loads it
 graphics protocol: kitty, Ghostty or WezTerm. iTerm2 is not supported by snacks.nvim.
 
 Output is drawn as virtual lines, which Neovim cannot select. To select it like any text, open the
-output panel (`Space` `p`): a split at the bottom with the current cell's output as a real buffer,
+output panel (`,p`): a split at the bottom with the current cell's output as a real buffer,
 that follows the cursor and updates after each run. Jump into it with `Ctrl-w j`, use `v`/`V`/`y`
-as usual, and close it with `q` (or `Space` `p` again). `Space` `y` copies the whole output without
+as usual, and close it with `q` (or `,p` again). `,y` copies the whole output without
 opening anything.
 
 ## Syntax highlighting
@@ -90,7 +90,7 @@ Code cells are highlighted with the official
 ## Limitations
 
 - No completion, variable inspector or LSP for Wolfram.
-- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `Space o` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLN_RENDER_MATH=0` to turn rendering off.
+- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLN_RENDER_MATH=0` to turn rendering off.
 - Plot images are saved on `:w` to `<notebook>.assets/<hash>.png` and the file holds only `(* -Graphics- <hash> *)`. Copy the `.assets` folder together with the notebook. If the code above a plot changed since it ran, the output shows `[stale]`. `:NotebookCleanAssets` deletes PNGs no marker references (run it after saving).
 
 ---
@@ -188,21 +188,21 @@ The treesitter parser is automatically compiled on first load.
 
 ### 3. Start a kernel
 
-- Start a Jupyter kernel with `:NotebookKernelStart` (default keymap: `<leader>ks`)
+- Start a Jupyter kernel with `:NotebookKernelStart` (default keymap: `,s`)
 
 ### 4. Execute a cell
 
-- Execute a cell with `:NotebookExecuteCell` (default keymap: `<leader>kx`)
+- Execute a cell with `:NotebookExecuteCell` (default keymap: `,x`)
 
 ### 5. View outputs
 
 - Outputs render inline as virtual lines below the cell
-- Use `:NotebookOutput` (default keymap: `<leader>ko`) to open the output in a floating window for easy copying
+- Use `:NotebookOutput` (default keymap: `,o`) to open the output in a floating window for easy copying
 
 ### 6. Inspect variables
 
-- Place your cursor on a variable and inspect it using `:NotebookInspect` (default keymap: `<leader>kh`)
-- Inspect all variables in cell using `:NotebookInspectCell` (default keymap: `<leader>kv`)
+- Place your cursor on a variable and inspect it using `:NotebookInspect` (default keymap: `,h`)
+- Inspect all variables in cell using `:NotebookInspectCell` (default keymap: `,v`)
 
 ## 📝 Persistent Markdown Rendering
 
@@ -324,7 +324,7 @@ require("ipynb").setup({
     next_cell = "]]",              -- jump to next cell
     prev_cell = "[[",              -- jump to previous cell
     -- Navigation (both Notebook mode and Cell mode)
-    jump_to_cell = "<leader>kj",   -- open cell picker
+    jump_to_cell = ",j",   -- open cell picker
     -- Cell operations (Notebook mode)
     cut_cell = "dd",               -- cut cell to register
     paste_cell_below = "p",        -- paste cell below
@@ -332,34 +332,34 @@ require("ipynb").setup({
     move_cell_down = "<M-j>",      -- move cell down
     move_cell_up = "<M-k>",        -- move cell up
     -- Cell operations (both Notebook mode and Cell mode)
-    add_cell_above = "<leader>ka", -- insert cell above
-    add_cell_below = "<leader>kb", -- insert cell below
-    make_markdown = "<leader>km",  -- convert to markdown cell
-    make_code = "<leader>ky",      -- convert to code cell
-    make_raw = "<leader>kr",       -- convert to raw cell
-    fold_toggle = "<leader>kf",    -- toggle cell fold
+    add_cell_above = ",a", -- insert cell above
+    add_cell_below = ",b", -- insert cell below
+    make_markdown = ",m",  -- convert to markdown cell
+    make_code = ",c",      -- convert to code cell
+    make_raw = ",w",       -- convert to raw cell
+    fold_toggle = ",f",    -- toggle cell fold
     -- Execution (both Notebook mode and Cell mode)
     execute_cell = "<C-CR>",            -- execute cell, stay
     execute_and_next = "<S-CR>",        -- execute cell, move to next
     execute_and_insert = "<M-CR>",      -- execute cell, insert new below
     execute_all_below = nil,            -- execute current and all below (unmapped)
-    menu_execute_cell = "<leader>kx",   -- execute cell (menu, if <C-CR> conflicts)
-    menu_execute_and_next = "<leader>kX", -- execute and next (menu, if <S-CR> conflicts)
+    menu_execute_cell = ",x",   -- execute cell (menu, if <C-CR> conflicts)
+    menu_execute_and_next = ",X", -- execute and next (menu, if <S-CR> conflicts)
     -- Output (both Notebook mode and Cell mode)
-    open_output = "<leader>ko",      -- open cell output in float (for copying)
-    clear_output = "<leader>kc",     -- clear current cell output
-    clear_all_outputs = "<leader>kC", -- clear all outputs
+    open_output = ",o",      -- open cell output in float (for copying)
+    clear_output = ",d",     -- clear current cell output
+    clear_all_outputs = ",D", -- clear all outputs
     -- Kernel (both Notebook mode and Cell mode)
     interrupt_kernel = "<C-c>",      -- interrupt execution
-    kernel_interrupt = "<leader>ki", -- interrupt (menu)
-    kernel_restart = "<leader>k0",   -- restart kernel
-    kernel_start = "<leader>ks",     -- start kernel
-    kernel_shutdown = "<leader>kS",  -- shutdown kernel
-    kernel_info = "<leader>kn",      -- show kernel info
+    kernel_interrupt = ",i", -- interrupt (menu)
+    kernel_restart = ",r",   -- restart kernel
+    kernel_start = ",s",     -- start kernel
+    kernel_shutdown = ",q",  -- shutdown kernel
+    kernel_info = ",n",      -- show kernel info
     -- Inspector (both Notebook mode and Cell mode)
-    variable_inspect = "<leader>kh", -- inspect variable at cursor
-    cell_variables = "<leader>kv",   -- show all variables in cell
-    toggle_auto_hover = "<leader>kH", -- toggle auto-hover on CursorHold
+    variable_inspect = ",h", -- inspect variable at cursor
+    cell_variables = ",v",   -- show all variables in cell
+    toggle_auto_hover = ",H", -- toggle auto-hover on CursorHold
     -- Note: i, a, I, A, o, O, <CR> enter Cell mode; <Esc> exits Cell mode
     -- Note: u, <C-r> perform global undo/redo across cells in both Notebook mode and Cell mode
     -- Note: <C-j>/<C-k> navigate cells while in Cell mode
@@ -436,9 +436,9 @@ require("ipynb").setup({
 | `:NotebookCreate [path] [kernel]` | Create new notebook | | |
 | `:NotebookSave` | Save notebook | | |
 | `:NotebookInfo` | Show notebook and cell info | | |
-| `:NotebookJumpToCell` | Open cell picker | `jump_to_cell` | `<leader>kj` |
-| `:NotebookInsertCellBelow` | Insert cell below | `add_cell_below` | `<leader>kb` |
-| `:NotebookInsertCellAbove` | Insert cell above | `add_cell_above` | `<leader>ka` |
+| `:NotebookJumpToCell` | Open cell picker | `jump_to_cell` | `,j` |
+| `:NotebookInsertCellBelow` | Insert cell below | `add_cell_below` | `,b` |
+| `:NotebookInsertCellAbove` | Insert cell above | `add_cell_above` | `,a` |
 | `:NotebookDeleteCell` | Delete current cell | | |
 | `:NotebookCutCell` | Cut cell to register | `cut_cell` | `dd` |
 | `:NotebookPasteCellBelow` | Paste cell below | `paste_cell_below` | `p` |
@@ -446,32 +446,32 @@ require("ipynb").setup({
 | `:NotebookMoveCellUp` | Move cell up | `move_cell_up` | `<M-k>` |
 | `:NotebookMoveCellDown` | Move cell down | `move_cell_down` | `<M-j>` |
 | `:NotebookToggleCellType` | Toggle code/markdown | | |
-| `:NotebookMakeMarkdown` | Convert to markdown | `make_markdown` | `<leader>km` |
-| `:NotebookMakeCode` | Convert to code | `make_code` | `<leader>ky` |
-| `:NotebookMakeRaw` | Convert to raw | `make_raw` | `<leader>kr` |
+| `:NotebookMakeMarkdown` | Convert to markdown | `make_markdown` | `,m` |
+| `:NotebookMakeCode` | Convert to code | `make_code` | `,c` |
+| `:NotebookMakeRaw` | Convert to raw | `make_raw` | `,w` |
 | `:NotebookExecuteCell` | Execute cell, stay | `execute_cell` | `<C-CR>` |
 | `:NotebookExecuteAndNext` | Execute cell, move next | `execute_and_next` | `<S-CR>` |
 | `:NotebookExecuteAllBelow` | Execute current and below | `execute_all_below` | (unmapped) |
 | `:NotebookExecuteAll` | Execute all code cells | | |
-| `:NotebookOutput` | Open output in float | `open_output` | `<leader>ko` |
-| `:NotebookClearOutput` | Clear cell output | `clear_output` | `<leader>kc` |
-| `:NotebookClearAllOutputs` | Clear all outputs | `clear_all_outputs` | `<leader>kC` |
-| `:NotebookFoldCell` | Toggle cell fold | `fold_toggle` | `<leader>kf` |
+| `:NotebookOutput` | Open output in float | `open_output` | `,o` |
+| `:NotebookClearOutput` | Clear cell output | `clear_output` | `,d` |
+| `:NotebookClearAllOutputs` | Clear all outputs | `clear_all_outputs` | `,D` |
+| `:NotebookFoldCell` | Toggle cell fold | `fold_toggle` | `,f` |
 | `:NotebookFoldAll` | Fold all cells | | |
 | `:NotebookUnfoldAll` | Unfold all cells | | |
 | `:NotebookFormatCell` | Format cell via LSP | | |
 | `:NotebookFormatAll` | Format all code cells | | |
-| `:NotebookKernelStart [path]` | Start kernel | `kernel_start` | `<leader>ks` |
+| `:NotebookKernelStart [path]` | Start kernel | `kernel_start` | `,s` |
 | `:NotebookKernelConnect <file>` | Connect to kernel | | |
 | `:NotebookSetKernel <name>` | Set kernelspec | | |
 | `:NotebookListKernels` | List available Jupyter kernels | | |
 | `:NotebookKernelInterrupt` | Interrupt execution | `interrupt_kernel` | `<C-c>` |
-| `:NotebookKernelRestart` | Restart kernel | `kernel_restart` | `<leader>k0` |
-| `:NotebookKernelShutdown` | Shutdown kernel | `kernel_shutdown` | `<leader>kS` |
-| `:NotebookKernelStatus` | Show kernel status | `kernel_info` | `<leader>kn` |
-| `:NotebookInspect` | Inspect variable at cursor | `variable_inspect` | `<leader>kh` |
-| `:NotebookInspectCell` | Show all cell variables | `cell_variables` | `<leader>kv` |
-| `:NotebookToggleAutoHover` | Toggle auto-hover | `toggle_auto_hover` | `<leader>kH` |
+| `:NotebookKernelRestart` | Restart kernel | `kernel_restart` | `,r` |
+| `:NotebookKernelShutdown` | Shutdown kernel | `kernel_shutdown` | `,q` |
+| `:NotebookKernelStatus` | Show kernel status | `kernel_info` | `,n` |
+| `:NotebookInspect` | Inspect variable at cursor | `variable_inspect` | `,h` |
+| `:NotebookInspectCell` | Show all cell variables | `cell_variables` | `,v` |
+| `:NotebookToggleAutoHover` | Toggle auto-hover | `toggle_auto_hover` | `,H` |
 
 Note: `vim.lsp.buf.format()` is wrapped to work with notebooks automatically.
 Disable with `format.enabled = false`.

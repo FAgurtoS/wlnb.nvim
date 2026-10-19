@@ -34,32 +34,32 @@ local M = {}
 ---@field execute_and_next string Execute cell, move next (default: '<S-CR>')
 ---@field execute_and_insert string Execute cell, insert below (default: '<M-CR>')
 ---@field interrupt_kernel string Interrupt kernel (default: '<C-c>')
---- <leader>k menu (notebook operations)
----@field jump_to_cell string Open cell picker (default: '<leader>kj')
----@field add_cell_above string Add cell above (default: '<leader>ka')
----@field add_cell_below string Add cell below (default: '<leader>kb')
----@field make_markdown string Make cell markdown (default: '<leader>km')
----@field make_code string Make cell code (default: '<leader>ky')
----@field make_raw string Make cell raw (default: '<leader>kr')
----@field open_output string Open output in float (default: '<leader>ko')
----@field output_panel string Toggle the output panel (default: '<leader>kp')
----@field kernel_list string List running Wolfram kernels (default: '<leader>kK')
----@field yank_output string Copy cell output to the clipboard (default: '<leader>kY')
----@field clear_output string Clear cell output (default: '<leader>kc')
----@field clear_all_outputs string Clear all outputs (default: '<leader>kC')
----@field fold_toggle string Toggle cell fold (default: '<leader>kf')
----@field menu_execute_cell string Execute cell (menu) (default: '<leader>kx')
----@field menu_execute_and_next string Execute cell, move next (menu) (default: '<leader>kX')
+--- Comma menu (notebook operations; Space stays free for the editor's own leader)
+---@field jump_to_cell string Open cell picker (default: ',j')
+---@field add_cell_above string Add cell above (default: ',a')
+---@field add_cell_below string Add cell below (default: ',b')
+---@field make_markdown string Make cell markdown (default: ',m')
+---@field make_code string Make cell code (default: ',c')
+---@field make_raw string Make cell raw (default: ',w')
+---@field open_output string Open output in float (default: ',o')
+---@field output_panel string Toggle the output panel (default: ',p')
+---@field kernel_list string List running Wolfram kernels (default: ',k')
+---@field yank_output string Copy cell output to the clipboard (default: ',y')
+---@field clear_output string Clear cell output (default: ',d')
+---@field clear_all_outputs string Clear all outputs (default: ',D')
+---@field fold_toggle string Toggle cell fold (default: ',f')
+---@field menu_execute_cell string Execute cell (menu) (default: ',x')
+---@field menu_execute_and_next string Execute cell, move next (menu) (default: ',X')
 ---@field execute_all_below string|nil Execute all cells from current to end (default: nil, unmapped)
----@field kernel_interrupt string Interrupt kernel (menu) (default: '<leader>ki')
----@field kernel_restart string Restart kernel (default: '<leader>k0')
----@field kernel_start string Start kernel (default: '<leader>ks')
----@field kernel_shutdown string Shutdown kernel (default: '<leader>kS')
----@field kernel_info string Show kernel info (default: '<leader>kn')
+---@field kernel_interrupt string Interrupt kernel (menu) (default: ',i')
+---@field kernel_restart string Restart kernel (default: ',r')
+---@field kernel_start string Start kernel (default: ',s')
+---@field kernel_shutdown string Shutdown kernel (default: ',q')
+---@field kernel_info string Show kernel info (default: ',n')
 --- Inspector
----@field variable_inspect string Inspect variable at cursor (default: '<leader>kh')
----@field cell_variables string Inspect all cell variables (default: '<leader>kv')
----@field toggle_auto_hover string Toggle inspect auto-hover (default: '<leader>kH')
+---@field variable_inspect string Inspect variable at cursor (default: ',h')
+---@field cell_variables string Inspect all cell variables (default: ',v')
+---@field toggle_auto_hover string Toggle inspect auto-hover (default: ',H')
 
 ---@class FoldingConfig
 ---@field hide_output boolean Include end marker in fold to hide output (default: false)
@@ -123,7 +123,7 @@ M.defaults = {
 		-- Direct facade keys (high-frequency)
 		next_cell = "]]",
 		prev_cell = "[[",
-		jump_to_cell = "<leader>kj",
+		jump_to_cell = ",j",
 		cut_cell = "dd",
 		paste_cell_below = "p",
 		paste_cell_above = "P",
@@ -133,30 +133,30 @@ M.defaults = {
 		execute_and_next = "<S-CR>",
 		execute_and_insert = "<M-CR>",
 		interrupt_kernel = "<C-c>",
-		-- <leader>k menu (notebook operations)
-		add_cell_above = "<leader>ka",
-		add_cell_below = "<leader>kb",
-		make_markdown = "<leader>km",
-		make_code = "<leader>ky",
-		make_raw = "<leader>kr",
-		open_output = "<leader>ko",
-		yank_output = "<leader>kY",
-		kernel_list = "<leader>kK",
-		output_panel = "<leader>kp",
-		clear_output = "<leader>kc",
-		clear_all_outputs = "<leader>kC",
-		menu_execute_cell = "<leader>kx",
-		menu_execute_and_next = "<leader>kX",
-		execute_all_below = nil, -- Unmapped by default; set to e.g. '<leader>kA' to enable
-		kernel_interrupt = "<leader>ki",
-		kernel_restart = "<leader>k0",
-		kernel_start = "<leader>ks",
-		kernel_shutdown = "<leader>kS",
-		kernel_info = "<leader>kn",
-		fold_toggle = "<leader>kf",
-		variable_inspect = "<leader>kh",
-		cell_variables = "<leader>kv",
-		toggle_auto_hover = "<leader>kH",
+		-- Comma menu (notebook operations; Space stays free for the editor's own leader)
+		add_cell_above = ",a",
+		add_cell_below = ",b",
+		make_markdown = ",m",
+		make_code = ",c",
+		make_raw = ",w",
+		open_output = ",o",
+		yank_output = ",y",
+		kernel_list = ",k",
+		output_panel = ",p",
+		clear_output = ",d",
+		clear_all_outputs = ",D",
+		menu_execute_cell = ",x",
+		menu_execute_and_next = ",X",
+		execute_all_below = nil, -- Unmapped by default; set to e.g. ',A' to enable
+		kernel_interrupt = ",i",
+		kernel_restart = ",r",
+		kernel_start = ",s",
+		kernel_shutdown = ",q",
+		kernel_info = ",n",
+		fold_toggle = ",f",
+		variable_inspect = ",h",
+		cell_variables = ",v",
+		toggle_auto_hover = ",H",
 		-- Note: i, a, I, A, o, O, <CR> are hardcoded for edit mode entry
 		-- Note: LSP keymaps (gd, gr, K, etc.) work via API interception in lsp.lua
 	},
