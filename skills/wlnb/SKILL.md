@@ -1,5 +1,5 @@
 ---
-name: wln-notebook
+name: wlnb
 description: Edit and run a Wolfram Language notebook (.wlnb) that is open in Neovim with wln.nvim, or edit a .wlnb file directly. Use when the user mentions a .wlnb notebook, wln.nvim, or asks to add, change, run or read cells of a Wolfram notebook open in nvim.
 ---
 

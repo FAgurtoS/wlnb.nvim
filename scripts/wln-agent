@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Control a .wlnb notebook that is open in a running Neovim (see skills/wln-notebook/SKILL.md).
+"""Control a .wlnb notebook that is open in a running Neovim (see skills/wlnb/SKILL.md).
 
   wln-agent list   FILE
   wln-agent get    FILE N
