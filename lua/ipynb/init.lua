@@ -18,6 +18,18 @@ local function setup_injection_directive()
     local bufnr = type(source) == 'number' and source or source:source()
     -- Read language from buffer variable, default to python
     metadata['injection.language'] = vim.b[bufnr].ipynb_language or 'python'
+    -- Skip highlighting cells that would make redraws slow (very long lines)
+    local capture = pred[2]
+    local node = capture and match[capture]
+    if type(node) == 'table' then
+      node = node[#node]
+    end
+    if node then
+      local ok, text = pcall(vim.treesitter.get_node_text, node, source)
+      if ok and util.too_long_to_highlight(text) then
+        metadata['injection.language'] = nil
+      end
+    end
   end, { force = true })
 end
 

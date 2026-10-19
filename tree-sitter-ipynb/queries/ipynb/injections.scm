@@ -2,7 +2,7 @@
 ; Uses custom #inject-notebook-language! directive registered in init.lua
 ((code_cell
   (cell_content) @injection.content)
-  (#inject-notebook-language!)
+  (#inject-notebook-language! @injection.content)
   (#set! injection.include-children))
 
 ; Inject Markdown into markdown cells

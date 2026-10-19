@@ -23,4 +23,22 @@ function M.find_wolfram_kernel()
   return kernel ~= '' and kernel or nil
 end
 
+---Cells with very long lines make tree-sitter highlighting crawl (every redraw re-runs the
+---queries over the whole line), so they are shown without syntax colors.
+---@param text string|string[]
+---@return boolean
+function M.too_long_to_highlight(text)
+  local max_line = vim.g.wlnb_highlight_max_line or 1200
+  local max_bytes = vim.g.wlnb_highlight_max_bytes or 60000
+  local lines = type(text) == 'table' and text or vim.split(text, '\n', { plain = true })
+  local bytes = 0
+  for _, line in ipairs(lines) do
+    if #line > max_line then
+      return true
+    end
+    bytes = bytes + #line + 1
+  end
+  return bytes > max_bytes
+end
+
 return M

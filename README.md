@@ -49,6 +49,13 @@ The parser compiles on first load; the first open may print a tree-sitter error,
 A status line component is available as `require('ipynb.kernels').status()` (returns text and a
 highlight group). Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
+## Performance with long expressions
+
+Syntax colors are skipped for cells with a line longer than 1200 characters or more than 60,000
+bytes (tree-sitter re-runs its queries over the whole line on every redraw, which made moving around
+a notebook with huge equations slow). Those cells are shown as plain text, in the notebook and in edit
+mode. Change the limits with `vim.g.wlnb_highlight_max_line` and `vim.g.wlnb_highlight_max_bytes`.
+
 ## Completion
 
 While you type Wolfram code in a cell, a popup offers the built-in symbols (7,700 `System`` names) with

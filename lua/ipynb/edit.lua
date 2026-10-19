@@ -351,6 +351,9 @@ local function get_or_create_edit_buf(cell, lines)
 
   -- Also start treesitter explicitly in case filetype autocmd doesn't
   pcall(vim.treesitter.start, buf, lang)
+  if require('ipynb.util').too_long_to_highlight(lines) then
+    pcall(vim.treesitter.stop, buf) -- very long lines: colors would make typing and moving slow
+  end
 
   -- Store the language for reference (used by our LSP wrappers)
   vim.b[buf].ipynb_edit_lang = lang
