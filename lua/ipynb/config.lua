@@ -43,6 +43,7 @@ local M = {}
 ---@field make_raw string Make cell raw (default: ',w')
 ---@field open_output string Open output in float (default: ',o')
 ---@field output_panel string Toggle the output panel (default: ',p')
+---@field export string Export the notebook to PDF (default: ',e')
 ---@field kernel_list string List running Wolfram kernels (default: ',k')
 ---@field yank_output string Copy cell output to the clipboard (default: ',y')
 ---@field clear_output string Clear cell output (default: ',d')
@@ -143,6 +144,7 @@ M.defaults = {
 		yank_output = ",y",
 		kernel_list = ",k",
 		output_panel = ",p",
+		export = ",e",
 		clear_output = ",d",
 		clear_all_outputs = ",D",
 		menu_execute_cell = ",x",

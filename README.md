@@ -61,7 +61,7 @@ Your own definitions (`f[x_] := ...`) are not offered yet.
 
 ## Export to PDF
 
-`:NotebookExport [file.pdf|file.tex]` (or `scripts/wlnb-export notebook.wlnb [out.pdf]`) builds a PDF
+`,e` or `:NotebookExport [file.pdf|file.tex]` inside the open notebook (it exports what is in the buffer, saved or not), or `scripts/wlnb-export notebook.wlnb [out.pdf]` from a shell, builds a PDF
 that looks like the notebook: code in boxes with Wolfram syntax colors, outputs below, plots as
 images, markdown cells typeset by pandoc (LaTeX math works), and results as real typeset equations
 (StandardForm look, via `TeXForm` from a throwaway kernel, so it needs one free license slot; without
@@ -149,7 +149,7 @@ Code cells are highlighted with the official
 ## Limitations
 
 - No completion, variable inspector or LSP for Wolfram.
-- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLNB_RENDER_MATH=0` to turn rendering off.
+- Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLNB_RENDER_MATH=0` to turn rendering off, or `WLNB_MATH_STYLE=light` (black on white) / `dark` (Wolfram's dark box) instead of the default transparent background with light text.
 - Plot images are saved on `:w` to `<notebook>.assets/<hash>.png` and the file holds only `(* -Graphics- <hash> *)`. Copy the `.assets` folder together with the notebook. If the code above a plot changed since it ran, the output shows `[stale]`. `:NotebookCleanAssets` deletes PNGs no marker references (run it after saving).
 
 ---

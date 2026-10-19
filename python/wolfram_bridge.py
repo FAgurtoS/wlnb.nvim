@@ -32,9 +32,16 @@ FORMAT_CODE = (
 )
 
 RENDER_MATH = os.environ.get("WLNB_RENDER_MATH", "1") != "0"
+# How results are drawn: transparent (light text, no background), light (black on white), dark (Wolfram default)
+MATH_STYLE = os.environ.get("WLNB_MATH_STYLE", "transparent")
 
 INIT_CODE = (
     '$WLNBRenderMath = ' + ('True' if RENDER_MATH else 'False') + '; '
+    '$WLNBMathStyle = "' + MATH_STYLE + '"; '
+    '$WLNBRaster[x_] := Switch[$WLNBMathStyle, '
+    '"light", Rasterize[Style[x, FontColor -> Black], Background -> White, ImageResolution -> 144], '
+    '"dark", Rasterize[x, ImageResolution -> 144], '
+    '_, Rasterize[Style[x, FontColor -> RGBColor[0.80, 0.84, 0.96]], Background -> None, ImageResolution -> 144]]; '
     '$WLNBRun[b64_String, tag_String] := Module[{code, res, text, png = ""}, '
     'WriteString["stdout", "' + MARK + 'START@@" <> tag <> "\\n"]; '
     'code = ByteArrayToString[BaseDecode[b64]]; '
@@ -45,7 +52,7 @@ INIT_CODE = (
     'png = Quiet[Check[BaseEncode[ExportByteArray[res, "PNG"]], ""]], '
     'text = ToString[res, InputForm, PageWidth -> Infinity]; '
     'If[$WLNBRenderMath && LeafCount[res] < 3000, '
-    'png = Quiet[Check[TimeConstrained[BaseEncode[ExportByteArray[Rasterize[res, ImageResolution -> 144], "PNG"]], 10, ""], ""]]]]; '
+    'png = Quiet[Check[TimeConstrained[BaseEncode[ExportByteArray[$WLNBRaster[res], "PNG"]], 10, ""], ""]]]]; '
     'WriteString["stdout", "' + MARK + 'RES@@" <> tag <> "@@" <> '
     'ExportString[<|"text" -> text, "png" -> png|>, "RawJSON", "Compact" -> True] <> "\\n"]]; '
     'WriteString["stdout", "' + MARK + 'DONE@@" <> tag <> "\\n"]; Null];'
