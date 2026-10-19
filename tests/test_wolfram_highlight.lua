@@ -2,6 +2,7 @@
 -- Run with: nvim --headless -u tests/minimal_init.lua -l tests/test_wolfram_highlight.lua
 
 local h = require('tests.helpers')
+vim.g.wlnb_highlight = 'treesitter' -- these tests cover the tree-sitter colors; wl_highlight has its own tests
 
 print('')
 print(string.rep('=', 60))

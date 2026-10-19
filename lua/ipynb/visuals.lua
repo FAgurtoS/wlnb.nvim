@@ -630,7 +630,7 @@ end
 ---Render all cells (full re-render, used for initial load and structural changes)
 ---@param state NotebookState
 ---@param cell_indices number[]|nil Optional list of cell indices to render (nil = all)
-function M.render_all(state, cell_indices)
+local function render_all_impl(state, cell_indices)
   local buf = state.facade_buf
   if not vim.api.nvim_buf_is_valid(buf) then
     return
@@ -665,6 +665,17 @@ function M.render_all(state, cell_indices)
     for i, _ in ipairs(state.cells) do
       M.render_cell(state, i, i == active_idx)
     end
+  end
+end
+
+function M.render_all(state, cell_indices)
+  render_all_impl(state, cell_indices)
+  -- Light Wolfram colors (cheap when nothing changed)
+  local ok, err = pcall(require('ipynb.wl_highlight').apply, state)
+  if not ok then
+    vim.schedule(function()
+      vim.notify_once('wlnb highlight: ' .. tostring(err), vim.log.levels.WARN)
+    end)
   end
 end
 

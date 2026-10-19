@@ -51,9 +51,18 @@ highlight group). Notebook shortcuts start with a comma (`,`) and only exist ins
 
 `NotebookDirectory[]` works in cells (it returns the notebook's folder), so notebooks written for WLJS or Mathematica that build file paths from it run unchanged.
 
+## Syntax colors
+
+Wolfram cells are colored by a tiny built-in highlighter (`lua/ipynb/wl_highlight.lua`): comments,
+strings, numbers, built-in symbols, patterns (`x_`), operators and slots. It paints once when a cell
+changes instead of re-running tree-sitter queries on every redraw, so scrolling stays smooth. The
+colors follow your theme (`WlComment`, `WlString`, `WlNumber`, `WlSystem`, `WlPattern`, `WlOperator`,
+`WlSlot` are links to standard groups; override them as usual). To use the tree-sitter colors instead,
+set `vim.g.wlnb_highlight = 'treesitter'` before the plugin loads.
+
 ## Performance with long expressions
 
-Syntax colors are skipped for cells with a line longer than 1200 characters or more than 60,000
+With `vim.g.wlnb_highlight = 'treesitter'`, syntax colors are skipped for cells with a line longer than 1200 characters or more than 60,000
 bytes (tree-sitter re-runs its queries over the whole line on every redraw, which made moving around
 a notebook with huge equations slow). Those cells are shown as plain text, in the notebook and in edit
 mode. Change the limits with `vim.g.wlnb_highlight_max_line` and `vim.g.wlnb_highlight_max_bytes`.

@@ -33,6 +33,12 @@ local function load_symbols()
   return symbols
 end
 
+---All built-in symbols, sorted: { name, lower, usage }
+---@return { name: string, lower: string, usage: string }[]
+function M.symbols()
+  return load_symbols()
+end
+
 ---Word being typed before the cursor, e.g. "Integ" in "x = Integ|"
 ---@param line string
 ---@param col integer 0-based cursor column

@@ -18,6 +18,11 @@ local function setup_injection_directive()
     local bufnr = type(source) == 'number' and source or source:source()
     -- Read language from buffer variable, default to python
     metadata['injection.language'] = vim.b[bufnr].ipynb_language or 'python'
+    -- Wolfram cells are colored by wl_highlight (extmarks), not by an injected tree-sitter parser
+    if metadata['injection.language'] == 'wolfram' and require('ipynb.wl_highlight').enabled() then
+      metadata['injection.language'] = nil
+      return
+    end
     -- Skip highlighting cells that would make redraws slow (very long lines)
     local capture = pred[2]
     local node = capture and match[capture]

@@ -309,6 +309,10 @@ local function get_or_create_edit_buf(cell, lines)
     vim.bo[existing].swapfile = false
     vim.bo[existing].filetype = lang
     pcall(vim.treesitter.start, existing, lang)
+    if lang == 'wolfram' and require('ipynb.wl_highlight').enabled() then
+      pcall(vim.treesitter.stop, existing)
+      require('ipynb.wl_highlight').attach_edit(existing)
+    end
     if lang == 'wolfram' then
       require('ipynb.completion').attach(existing)
     end
@@ -351,7 +355,10 @@ local function get_or_create_edit_buf(cell, lines)
 
   -- Also start treesitter explicitly in case filetype autocmd doesn't
   pcall(vim.treesitter.start, buf, lang)
-  if require('ipynb.util').too_long_to_highlight(lines) then
+  if lang == 'wolfram' and require('ipynb.wl_highlight').enabled() then
+    pcall(vim.treesitter.stop, buf) -- light colors (extmarks) instead of tree-sitter
+    require('ipynb.wl_highlight').attach_edit(buf)
+  elseif require('ipynb.util').too_long_to_highlight(lines) then
     pcall(vim.treesitter.stop, buf) -- very long lines: colors would make typing and moving slow
   end
 
