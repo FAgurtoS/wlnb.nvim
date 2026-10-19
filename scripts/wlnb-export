@@ -1,0 +1,4 @@
+#!/bin/sh
+# Export a .wlnb notebook to PDF (or .tex). Usage: scripts/wlnb-export notebook.wlnb [out.pdf|out.tex]
+root="$(cd "$(dirname "$0")/.." && pwd)"
+exec nvim --headless -u NONE --cmd "set rtp+=$root" -l "$root/scripts/export.lua" "$@"

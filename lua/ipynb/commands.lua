@@ -237,6 +237,20 @@ function M.setup_buffer(state)
     require('ipynb.panel').toggle(state)
   end, { desc = 'Toggle the output panel (selectable text)' })
 
+  vim.api.nvim_buf_create_user_command(buf, 'NotebookExport', function(opts)
+    local src = state.source_path or vim.api.nvim_buf_get_name(buf)
+    local dest = opts.fargs[1] and vim.fn.expand(opts.fargs[1]) or (src:gsub('%.%w+$', '') .. '.pdf')
+    vim.notify('Exporting ' .. vim.fn.fnamemodify(dest, ':t') .. ' (about 10 s)...')
+    vim.schedule(function()
+      local out, err = require('ipynb.export').export(state.cells, dest, vim.fn.fnamemodify(src, ':t:r'))
+      if out then
+        vim.notify('Wrote ' .. out)
+      else
+        vim.notify('NotebookExport: ' .. tostring(err), vim.log.levels.ERROR)
+      end
+    end)
+  end, { nargs = '?', complete = 'file', desc = 'Export the notebook to PDF (or .tex) with equations and plots' })
+
   vim.api.nvim_buf_create_user_command(buf, 'NotebookYankOutput', function()
     output.yank_output(state)
   end, { desc = 'Copy current cell output to the clipboard' })

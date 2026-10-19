@@ -59,6 +59,16 @@ two characters. Regenerate the list with a kernel after a Wolfram upgrade:
 `WolframKernel -noprompt -run 'Get["scripts/gen_symbols.wl"]; Exit[]'`.
 Your own definitions (`f[x_] := ...`) are not offered yet.
 
+## Export to PDF
+
+`:NotebookExport [file.pdf|file.tex]` (or `scripts/wlnb-export notebook.wlnb [out.pdf]`) builds a PDF
+that looks like the notebook: code in boxes with Wolfram syntax colors, outputs below, plots as
+images, markdown cells typeset by pandoc (LaTeX math works), and results as real typeset equations
+(StandardForm look, via `TeXForm` from a throwaway kernel, so it needs one free license slot; without
+one, or for very wide expressions, the InputForm text is printed instead). Long text outputs are cut
+after 40 lines. A `.tex` destination writes the LaTeX source plus an images folder. Needs `pandoc` and
+`xelatex` (TeX Live / MacTeX).
+
 ## Agents (Claude Code and others)
 
 `skills/wlnb/SKILL.md` teaches an agent the format and how to drive a notebook that is open in

@@ -159,16 +159,8 @@ Exit[]
 ---@param path string
 ---@return Cell[]|nil, string|nil err
 local function parse_legacy(path)
-  local kernel
-  local script = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':p:h:h:h') .. '/python/wolfram_bridge.py'
-  local py = vim.fn.executable('python3') == 1 and 'python3' or 'python'
-  local res = vim.system({
-    py, '-I', '-c',
-    'import sys,importlib.util as u;s=u.spec_from_file_location("b",sys.argv[1]);m=u.module_from_spec(s);s.loader.exec_module(m);print(m.find_kernel() or "")',
-    script,
-  }, { text = true }):wait()
-  kernel = vim.trim(res.stdout or '')
-  if kernel == '' then
+  local kernel = require('ipynb.util').find_wolfram_kernel()
+  if not kernel then
     return nil, 'WolframKernel not found'
   end
   local out = vim.system({ kernel, '-noprompt', '-run', LEGACY_CODE:format(path) }, { text = true }):wait()
