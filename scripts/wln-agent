@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""Control a .wlnb notebook that is open in a running Neovim (see skills/wln-notebook/SKILL.md).
+
+  wln-agent list   FILE
+  wln-agent get    FILE N
+  wln-agent set    FILE N            (new source on stdin)
+  wln-agent insert FILE AFTER TYPE   (source on stdin; AFTER=0 inserts at the top; TYPE code|markdown|raw)
+  wln-agent delete FILE N
+  wln-agent run    FILE N [--wait]   (starts the kernel if needed; --wait polls until the cell is idle)
+  wln-agent save   FILE
+
+Prints JSON. Set NVIM_SERVER to pick a Neovim instance, otherwise every running one is tried.
+"""
+import glob, json, os, subprocess, sys, tempfile, time
+
+
+def servers():
+    env = os.environ.get("NVIM_SERVER")
+    if env:
+        return [env]
+    base = os.environ.get("TMPDIR", tempfile.gettempdir())
+    found = glob.glob(os.path.join(base, "nvim.*", "*", "nvim.*.0")) + glob.glob("/tmp/nvim.*/*/nvim.*.0")
+    found.sort(key=lambda p: -os.path.getmtime(p))
+    return found
+
+
+def call(server, fn, args):
+    request = json.dumps({"fn": fn, "args": args}).replace("'", "''")
+    expr = "luaeval('require(\"ipynb.agent\").call(_A)', '%s')" % request
+    out = subprocess.run(["nvim", "--server", server, "--remote-expr", expr],
+                         capture_output=True, text=True, timeout=120)
+    if out.returncode != 0:
+        return None
+    try:
+        return json.loads(out.stdout)
+    except ValueError:
+        return None
+
+
+def main(argv):
+    if len(argv) < 3 or argv[1] not in ("list", "get", "set", "insert", "delete", "run", "save"):
+        sys.stderr.write(__doc__)
+        return 2
+    fn, path = argv[1], os.path.abspath(argv[2])
+    rest = argv[3:]
+    wait = "--wait" in rest
+    rest = [a for a in rest if a != "--wait"]
+    if fn in ("get", "delete", "run"):
+        args = [path, int(rest[0])]
+    elif fn == "set":
+        args = [path, int(rest[0]), sys.stdin.read().rstrip("\n")]
+    elif fn == "insert":
+        args = [path, int(rest[0]), rest[1], sys.stdin.read().rstrip("\n")]
+    else:
+        args = [path]
+    last = {"ok": False, "error": "no running Neovim has this notebook open (start nvim with the file first)"}
+    for server in servers():
+        res = call(server, fn, args)
+        if res is None:
+            continue
+        if res.get("ok") or "not open in this Neovim" not in res.get("error", ""):
+            last = res
+            if fn == "run" and wait and res.get("ok"):
+                n = int(rest[0])
+                time.sleep(0.5)
+                for _ in range(2400):  # up to 20 minutes
+                    cell = call(server, "get", [path, n])
+                    if cell and cell.get("state") != "busy":
+                        last = cell
+                        break
+                    time.sleep(0.5)
+            break
+    print(json.dumps(last, ensure_ascii=False))
+    return 0 if last.get("ok") else 1
+
+
+sys.exit(main(sys.argv))

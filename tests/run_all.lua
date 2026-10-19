@@ -383,6 +383,7 @@ local tests = {
   join(root, 'tests/test_io.lua'),
   join(root, 'tests/test_wlnb.lua'),
   join(root, 'tests/test_wln.lua'),
+  join(root, 'tests/test_agent.lua'),
   join(root, 'tests/test_output_panel.lua'),
   join(root, 'tests/test_wolfram_highlight.lua'),
   join(root, 'tests/test_wolfram_kernel.lua'),

@@ -49,6 +49,14 @@ The parser compiles on first load; the first open may print a tree-sitter error,
 A status line component is available as `require('ipynb.kernels').status()` (returns text and a
 highlight group). Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
+## Agents (Claude Code and others)
+
+`skills/wln-notebook/SKILL.md` teaches an agent the format and how to drive a notebook that is open in
+Neovim: `scripts/wln-agent list|get|set|insert|delete|run|save notebook.wlnb` talks to the running
+Neovim through `nvim --server` (no setup), so edits and runs show up live and nothing on disk is
+overwritten. For Claude Code, link it once: `ln -s ~/wln.nvim/skills/wln-notebook ~/.claude/skills/`.
+`run` starts the kernel if needed and refuses when the license limit is reached instead of prompting.
+
 ## Converting WLJS notebooks
 
 ```sh
