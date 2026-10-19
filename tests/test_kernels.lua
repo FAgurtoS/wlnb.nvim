@@ -44,6 +44,29 @@ h.run_test('list_finds_and_kill_stops_a_kernel', function()
   h.assert_true(wait_for(function() return pids()[pid] == nil end), 'kernel still listed after kill')
 end)
 
+h.run_test('window_starts_on_first_kernel_and_x_stops_it', function()
+  local job = spawn()
+  local pid = vim.fn.jobpid(job)
+  h.assert_true(wait_for(function() return pids()[pid] ~= nil end), 'fake kernel not listed')
+  local orig_confirm = vim.fn.confirm
+  vim.fn.confirm = function() return 1 end
+  kernels.show()
+  local win = vim.api.nvim_get_current_win()
+  local first = kernels.list()[1]
+  -- put the cursor on our fake kernel's line
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  for i, l in ipairs(lines) do
+    if l:find('pid ' .. pid, 1, true) then
+      vim.api.nvim_win_set_cursor(win, { i, 0 })
+    end
+  end
+  h.assert_true(first ~= nil and vim.api.nvim_win_get_cursor(win)[1] >= 4, 'cursor should be on a kernel line')
+  vim.api.nvim_feedkeys('x', 'x', false)
+  h.assert_true(wait_for(function() return pids()[pid] == nil end), 'x should stop the selected kernel')
+  vim.fn.confirm = orig_confirm
+  if vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_close(win, true) end
+end)
+
 h.run_test('license_max_is_remembered', function()
   kernels.set_max(2)
   kernels._max = nil
@@ -52,6 +75,7 @@ end)
 
 h.run_test('limit_reached_prompts_and_frees_a_slot_before_continuing', function()
   kernels.set_max(1)
+  h.assert_true(wait_for(function() return #kernels.list() == 0 end), 'leftover fake kernels from earlier tests')
   local job = spawn()
   local pid = vim.fn.jobpid(job)
   h.assert_true(wait_for(function() return pids()[pid] ~= nil end), 'fake kernel not listed')

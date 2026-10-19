@@ -198,7 +198,7 @@ function M.show()
     local max = M.get_max()
     local lines = {
       ('Wolfram kernels: %d / %s (license limit)'):format(#entries, max and tostring(max) or '?'),
-      'x: stop kernel   r: refresh   q: close',
+      'j/k: select   x: stop selected kernel   r: refresh   q: close',
       '',
     }
     for _, info in ipairs(entries) do
@@ -226,6 +226,11 @@ function M.show()
     title = ' Wolfram kernels ',
   })
 
+  -- start on the first kernel, not on the title, so `x` acts on something right away
+  if #entries > 0 then
+    vim.api.nvim_win_set_cursor(win, { 4, 0 })
+  end
+
   local function close()
     if vim.api.nvim_win_is_valid(win) then
       vim.api.nvim_win_close(win, true)
@@ -236,10 +241,15 @@ function M.show()
   end
   map('q', close)
   map('<Esc>', close)
-  map('r', render)
+  map('r', function()
+    local row = vim.api.nvim_win_get_cursor(win)[1]
+    render()
+    vim.api.nvim_win_set_cursor(win, { math.min(row, vim.api.nvim_buf_line_count(buf)), 0 })
+  end)
   map('x', function()
     local info = entries[vim.api.nvim_win_get_cursor(win)[1] - 3]
     if not info then
+      vim.notify('Move the cursor onto a kernel line (j/k) and press x', vim.log.levels.INFO)
       return
     end
     local external = info.state == nil
@@ -247,7 +257,7 @@ function M.show()
     if external then
       msg = msg .. '\nIt is not owned by this Neovim: another application may be using it.'
     end
-    if vim.fn.confirm(msg, '&Yes\n&No', 2) == 1 then
+    if vim.fn.confirm(msg, '&Yes\n&No', external and 2 or 1) == 1 then
       M.kill(info)
       vim.defer_fn(function()
         if vim.api.nvim_buf_is_valid(buf) then

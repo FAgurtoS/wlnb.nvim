@@ -53,7 +53,7 @@ Cells are navigated in *Notebook mode*; `i` or `Enter` opens the current cell fo
 | Toggle output panel (selectable text) | `Space` `p` (`:NotebookOutputPanel`) |
 | Copy output to the clipboard | `Space` `y` (`:NotebookYankOutput`) |
 | Open output in a float | `Space` `o` |
-| List running Wolfram kernels / stop one | `Space` `K` (`:NotebookKernels`; `x` stops, `r` refreshes, `q` closes) |
+| List running Wolfram kernels / stop one | `Space` `K` (`:NotebookKernels`; `j`/`k` select a kernel, `x` stops it, `r` refreshes, `q` closes; no Space needed inside the window) |
 | Stop this notebook's kernel / restart it | `Space` `x` / `Space` `X` |
 | Interrupt (kills and restarts the kernel) | `Ctrl-c` |
 
