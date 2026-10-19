@@ -22,7 +22,7 @@ h.run_test('tokens_cover_comments_strings_numbers_symbols_patterns', function()
   h.assert_eq(groups({ 'Plot[Sin[x], {x, 0, 2.5*^3}] (* note *)' }),
     'WlSystem:Plot WlSystem:Sin WlNumber:0 WlNumber:2.5*^3 WlComment:(* note *)')
   h.assert_eq(groups({ 'f[x_, y__Integer] := x /. y -> "a\\"b"' }),
-    'WlPattern:x_ WlPattern:y__Integer WlOperator::= WlOperator:/. WlOperator:-> WlString:"a\\"b"')
+    'WlCall:f WlPattern:x_ WlPattern:y__Integer WlOperator::= WlOperator:/. WlOperator:-> WlString:"a\\"b"')
   h.assert_eq(groups({ 'TrainDiffSystem[name, F[x]] + y' }), 'WlCall:TrainDiffSystem WlCall:F')
   h.assert_eq(groups({ '#1 + ## &' }), 'WlSlot:#1 WlOperator:+ WlSlot:## WlOperator:&')
 end)
