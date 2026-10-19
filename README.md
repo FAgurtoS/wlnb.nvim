@@ -49,6 +49,16 @@ The parser compiles on first load; the first open may print a tree-sitter error,
 A status line component is available as `require('ipynb.kernels').status()` (returns text and a
 highlight group). Notebook shortcuts start with a comma (`,`) and only exist inside `.wlnb` buffers.
 
+## Completion
+
+While you type Wolfram code in a cell, a popup offers the built-in symbols (7,700 `System`` names) with
+their usage text. It works as a small in-process LSP server fed by `data/wolfram_symbols.json`, so no
+kernel is needed. With blink.cmp or nvim-cmp their LSP source shows it; without one, Neovim's own
+completion popup is turned on for the cell (`Ctrl-y` accepts, `Ctrl-n`/`Ctrl-p` move). It starts after
+two characters. Regenerate the list with a kernel after a Wolfram upgrade:
+`WolframKernel -noprompt -run 'Get["scripts/gen_symbols.wl"]; Exit[]'`.
+Your own definitions (`f[x_] := ...`) are not offered yet.
+
 ## Agents (Claude Code and others)
 
 `skills/wlnb/SKILL.md` teaches an agent the format and how to drive a notebook that is open in

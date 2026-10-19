@@ -13,6 +13,7 @@ Status marks: [ ] todo, [x] done.
 - [x] 5b. Kernel control: interrupt, restart, shutdown (bridge must handle them; plugin already has :NotebookKernelInterrupt/Restart/Shutdown + keymaps). Restart marks all outputs [stale]. Check: infinite loop is interrupted; after restart, x is undefined
 - [x] 6. Plots -> PNG via images.lua; TeXForm optional
 - [x] 7a. .wln <-> .wlnb converter (text and legacy flavours; .nb still open)
-- [ ] 7. Optional: WSTP interrupt, .nb converter, LSP completion
+- [x] 7b. Symbol completion (in-process LSP, data/wolfram_symbols.json), agent skill + wlnb-agent
+- [ ] 7. Optional: WSTP interrupt, .nb converter, completion of user definitions
 
 Env: wolframscript found at /usr/local/bin; `jupyter` NOT found -> step 4 likely needs own bridge (step 7 moves up).

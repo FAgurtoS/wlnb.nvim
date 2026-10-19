@@ -309,6 +309,9 @@ local function get_or_create_edit_buf(cell, lines)
     vim.bo[existing].swapfile = false
     vim.bo[existing].filetype = lang
     pcall(vim.treesitter.start, existing, lang)
+    if lang == 'wolfram' then
+      require('ipynb.completion').attach(existing)
+    end
     vim.b[existing].ipynb_edit_lang = lang
     local current = vim.api.nvim_buf_get_lines(existing, 0, -1, false)
     if table.concat(current, '\n') ~= table.concat(lines, '\n') then
@@ -342,6 +345,9 @@ local function get_or_create_edit_buf(cell, lines)
   -- bufname_valid() check, so LSP won't try to attach directly
   -- Our get_clients/buf_request wrappers proxy LSP requests to the shadow buffer
   vim.bo[buf].filetype = lang
+  if lang == 'wolfram' then
+    require('ipynb.completion').attach(buf)
+  end
 
   -- Also start treesitter explicitly in case filetype autocmd doesn't
   pcall(vim.treesitter.start, buf, lang)
