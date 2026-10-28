@@ -201,7 +201,19 @@ end
 ---@return string|nil dest, string|nil err
 function M.convert(src, dest)
   local wlnb = require('ipynb.wlnb')
-  if src:match('%.wln$') then
+  if src:match('%.nb$') then
+    dest = dest or src:gsub('%.nb$', '.wlnb')
+    local cells, err = require('ipynb.nb').read(src)
+    if not cells then
+      return nil, err
+    end
+    wlnb.write(dest, cells)
+  elseif src:match('%.wlnb$') and dest and dest:match('%.nb$') then
+    local ok, err = require('ipynb.nb').write(dest, wlnb.read(src))
+    if not ok then
+      return nil, err
+    end
+  elseif src:match('%.wln$') then
     dest = dest or src:gsub('%.wln$', '.wlnb')
     local cells, err = M.read(src)
     if not cells then
@@ -212,7 +224,7 @@ function M.convert(src, dest)
     dest = dest or src:gsub('%.wlnb$', '.wln')
     vim.fn.writefile(M.serialize((wlnb.read(src))), dest)
   else
-    return nil, 'expected a .wln or .wlnb file'
+    return nil, 'expected a .nb, .wln or .wlnb file'
   end
   return dest
 end

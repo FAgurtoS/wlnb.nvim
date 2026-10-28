@@ -15,6 +15,7 @@ Status marks: [ ] todo, [x] done.
 - [x] 7a. .wln <-> .wlnb converter (text and legacy flavours; .nb still open)
 - [x] 7c. PDF/.wl export (:NotebookExport, ,e), images in a .wlnbi sidecar next to the .wlnb (format v1; 'embedded' mode optional)
 - [x] 7b. Symbol completion (in-process LSP, data/wolfram_symbols.json), agent skill + wlnb-agent
-- [ ] 7. Optional: WSTP interrupt, .nb converter, completion of user definitions
+- [x] 7d. .nb <-> .wlnb converter (kernel-based, no front end; wl/*.wl)
+- [ ] 7. Optional: WSTP interrupt, completion of user definitions
 
 Env: wolframscript found at /usr/local/bin; `jupyter` NOT found -> step 4 likely needs own bridge (step 7 moves up).

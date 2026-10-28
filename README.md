@@ -95,19 +95,30 @@ Neovim through `nvim --server` (no setup), so edits and runs show up live and no
 overwritten. For Claude Code, link it once: `ln -s ~/wlnb.nvim/skills/wlnb ~/.claude/skills/`.
 `run` starts the kernel if needed and refuses when the license limit is reached instead of prompting.
 
-## Converting WLJS notebooks
+## Converting notebooks (.nb and WLJS .wln)
 
 ```sh
-scripts/wlnb-convert notebook.wln            # -> notebook.wlnb
-scripts/wlnb-convert notebook.wlnb out.wln   # -> WLJS text format
+scripts/wlnb-convert notebook.nb                 # Mathematica -> notebook.wlnb
+scripts/wlnb-convert notebook.wlnb out.nb        # -> Mathematica notebook
+scripts/wlnb-convert notebook.wln                # WLJS -> notebook.wlnb
+scripts/wlnb-convert notebook.wlnb out.wln       # -> WLJS text format
 ```
 
-or `:NotebookConvert [source] [destination]` inside Neovim. Both WLJS flavours are read: the text one
-directly, and the older association dump through a one-shot `WolframKernel` (it needs a free license
-slot). Markdown cells stay markdown, other WLJS cells (`.html`, `.js`, `.slide`, ...) become `raw`
-cells, and text outputs (`codemirror` and `print` displays) are kept as InputForm text with the
-editor's box markers removed. Rendered outputs (html, graphics, ...) are dropped: run the cells again.
-Writing `.wln` saves inputs only.
+or `:NotebookConvert source [destination]` inside Neovim (no notebook needs to be open).
+
+**Mathematica `.nb`** (both ways, no front end needed; a one-shot kernel does the work, so one license
+slot is used for a few seconds). Reading: Input/Code cells become code (as InputForm text), Output, Print
+and Message become outputs (graphics as PNG), Title/Section/Text and similar become markdown (headings
+as `#`). Cell formatting, dynamic content and notebook options are lost. Writing: code becomes Input
+cells, outputs become real typeset Output cells (plots as images), `#` headings become
+Title/Section/Subsection, other markdown becomes Text. Tested on the xAct documentation notebooks, for
+example `xTensorDoc.nb` (8 MB, 1292 input cells) converts to a 640 KB `.wlnb` in about 15 seconds.
+
+**WLJS `.wln`.** Both flavours are read: the text one directly, and the older association dump through
+a one-shot `WolframKernel` (it needs a free license slot). Markdown cells stay markdown, other WLJS cells
+(`.html`, `.js`, `.slide`, ...) become `raw` cells, and text outputs (`codemirror` and `print` displays) are
+kept as InputForm text with the editor's box markers removed. Rendered outputs (html, graphics, ...) are
+dropped: run the cells again. Writing `.wln` saves inputs only.
 
 ## Using a notebook
 

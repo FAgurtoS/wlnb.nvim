@@ -58,4 +58,4 @@ Rules:
 
 ## Converting
 
-`~/wlnb.nvim/scripts/wlnb-convert notebook.wln` (WLJS to .wlnb) and `... notebook.wlnb out.wln` (back).
+`~/wlnb.nvim/scripts/wlnb-convert notebook.nb` (Mathematica to .wlnb), `... notebook.wlnb out.nb` (back), and the same with `.wln` for WLJS. Conversions of `.nb` and legacy `.wln` use a one-shot kernel (one license slot).
