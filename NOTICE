@@ -1,0 +1,7 @@
+wlnb.nvim
+Copyright 2025 Felipe Agurto
+
+This product is a fork of ipynb.nvim (https://github.com/ajbucci/ipynb.nvim),
+Copyright its authors, licensed under the Apache License, Version 2.0.
+
+Includes tree-sitter-wolfram (MIT License), see tree-sitter-wolfram/LICENSE.

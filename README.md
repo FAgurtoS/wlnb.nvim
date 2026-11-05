@@ -20,7 +20,7 @@ On macOS, everything else is in the [Brewfile](Brewfile): `brew bundle`. It inst
 put `scripts/zig-cc` first on `PATH` when the parser is first compiled) and Ghostty.
 
 ```sh
-git clone <this repo> ~/wlnb.nvim
+git clone https://github.com/FAgurtoS/wlnb.nvim ~/wlnb.nvim
 cd ~/wlnb.nvim
 # first run only (compiles the parser, clones test dependencies into tests/.nvim-test):
 PATH=$PWD/scripts/zig-cc:$PATH nvim --headless -u tests/minimal_init.lua -l tests/run_all.lua
@@ -181,6 +181,23 @@ Code cells are highlighted with the official
 - Every result (numbers, expressions, lists, matrices...) is shown as a rendered StandardForm image; `,y` / `:NotebookYankOutput` still copy the InputForm text. Without image support the InputForm text is shown instead. Set `WLNB_RENDER_MATH=0` to turn rendering off, or `WLNB_MATH_STYLE=light` (black on white) / `dark` (Wolfram's dark box) instead of the default transparent background with light text.
 - Plot and result images are saved on `:w` next to the notebook in a sidecar file of the same name: `plot.wlnb` (readable cells) + `plot.wlnbi` (images). Copy them together: `:NotebookCopy destination` copies both, and a notebook opened without its `.wlnbi` still works but warns that images are missing. `require('ipynb').setup({ assets = 'embedded' })` puts the images at the end of the `.wlnb` instead (one file, ugly tail). Old notebooks with a `<notebook>.assets` folder are migrated when you save. If the code above a plot changed since it ran, the output shows `[stale]`. See [FORMAT.md](FORMAT.md).
 
+
+## Acknowledgements and license
+
+wlnb.nvim is a fork of [ajbucci/ipynb.nvim](https://github.com/ajbucci/ipynb.nvim) (Apache License 2.0).
+The notebook editing engine (facade buffer, modal cell editing, shadow buffers for LSP, kernel bridge,
+output rendering, images) comes from that project; this fork adapts it to Wolfram Language: the
+`.wlnb` / `.wlnbi` formats, the Wolfram kernel bridge, highlighting, completion, export, converters and the
+agent tools. Many thanks to [@ajbucci](https://github.com/ajbucci) and the ipynb.nvim contributors. Original
+usage docs: [doc/UPSTREAM_README.md](doc/UPSTREAM_README.md). The Lua module keeps the name `ipynb` to stay
+close to upstream.
+
+Also used:
+- [tree-sitter-wolfram](https://github.com/WolframResearch/tree-sitter-wolfram) (MIT, Wolfram Research / Brenton Bostick), vendored in `tree-sitter-wolfram/`; highlight queries from [zed-wolfram-highlighter](https://github.com/WolframResearch/zed-wolfram-highlighter) (MIT).
+- [snacks.nvim](https://github.com/folke/snacks.nvim) for inline images, [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) and [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig).
+- Wolfram Language and WolframKernel are products of Wolfram Research; this project is not affiliated with or endorsed by Wolfram Research.
+
+Licensed under the Apache License 2.0 (see [LICENSE](LICENSE)). Files changed from upstream are marked by the git history of this repository.
 
 ---
 
