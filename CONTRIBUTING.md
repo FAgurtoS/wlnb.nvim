@@ -39,7 +39,7 @@ Notes:
 - The test runner bootstraps a minimal Neovim + plugins into a temp XDG dir.
 - It will create a small Python venv for LSP tests (basedpyright + ruff) if available.
 - Set `IPYNB_TEST_SKIP_BOOTSTRAP=1` to skip lazy.nvim bootstrapping.
-- Set `IPYNB_TEST_SKIP_LSP_BOOTSTRAP=1` to skip Python venv/LSP setup.
+- Set `IPYNB_TEST_SKIP_LSP_BOOTSTRAP=1` to skip Python venv/LSP setup. If you provide your own `basedpyright`, also set `IPYNB_TEST_LSP_BIN=<path to basedpyright-langserver>` and `IPYNB_TEST_LSP_ARGS=--stdio`; otherwise `test_lsp` attaches to ruff first and the definition/references tests fail.
 
 ## Change Guidelines
 
