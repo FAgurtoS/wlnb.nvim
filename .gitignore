@@ -3,3 +3,4 @@ examples/*.pdf
 .DS_Store
 *.o
 *.so
+__pycache__/
