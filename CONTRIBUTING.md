@@ -1,4 +1,4 @@
-# Contributing to ipynb.nvim
+# Contributing to wlnb.nvim (fork of ipynb.nvim)
 
 Thanks for your interest in contributing!
 

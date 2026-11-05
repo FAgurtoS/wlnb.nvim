@@ -1,2 +1,5 @@
 tests/.nvim-test/
 examples/*.pdf
+.DS_Store
+*.o
+*.so
