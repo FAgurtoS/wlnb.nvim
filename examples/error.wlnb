@@ -1,13 +1,25 @@
-(* ::wlnb:: v0 *)
+(* ::wlnb:: v1 *)
 
 (* ::cell:: input *)
 1/0
 
 (* ::cell:: output *)
-(* ComplexInfinity *)
+(* 
+Power::infy: Infinite expression 0^(-1) encountered.
+ *)
+
+(* ::cell:: output *)
+(* ComplexInfinity
+-Rendered- 17ffd6268e89 *)
 
 (* ::cell:: input *)
 Foo[1, 2
 
 (* ::cell:: output *)
-(* $Failed *)
+(* 
+ToExpression::sntxi: Incomplete expression; more input is needed."\n"
+ *)
+
+(* ::cell:: output *)
+(* $Failed
+-Rendered- fe4bdd978f14 *)

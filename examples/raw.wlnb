@@ -1,4 +1,4 @@
-(* ::wlnb:: v0 *)
+(* ::wlnb:: v1 *)
 
 (* ::cell:: raw *)
 (* Raw text: neither evaluated nor rendered. *)
@@ -10,4 +10,5 @@ x = 5;
 x^2
 
 (* ::cell:: output *)
-(* 25 *)
+(* 25
+-Rendered- a456c2fce98f *)

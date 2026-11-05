@@ -1,4 +1,4 @@
-(* ::wlnb:: v0 *)
+(* ::wlnb:: v1 *)
 
 (* ::cell:: input *)
 Plot[Sin[x], {x, 0, 2 Pi}]
@@ -7,19 +7,40 @@ Plot[Sin[x], {x, 0, 2 Pi}]
 (* -Graphics- 34a1aa3b44c5 *)
 
 (* ::cell:: input *)
-f[r_] := 1-2*M/r^2
+f[r_] := 1-2*M/r
 
 (* ::cell:: input *)
 f[r]
 
 (* ::cell:: output *)
-(* 1 - (2*M)/r^2
--Rendered- fd4a8d029e2f *)
+(* 1 - (2*M)/r
+-Rendered- 3d4d98bd79d1 *)
 
 (* ::cell:: input *)
-1 - (2*M)/r^2
+Series[1 - (2*M)/r,{r,Infinity,2}]
  
 
 (* ::cell:: output *)
-(* 1 - (2*M)/r^2
--Rendered- 25b29302558f *)
+(* SeriesData[r, Infinity, {1, -2*M}, 0, 3, 1]
+-Rendered- e189173acd4a *)
+
+(* ::cell:: input *)
+Integrate[x^2,{x,0,b}]
+
+(* ::cell:: output *)
+(* b^3/3
+-Rendered- e6c8592e5b4f *)
+
+(* ::cell:: input *)
+?Series 
+
+(* ::cell:: output *)
+(* InformationData[<|"ObjectType" -> "Symbol", "Usage" -> "\!\(\*RowBox[{\"Series\", \"[\", RowBox[{StyleBox[\"f\", \"TI\"], \",\", RowBox[{\"{\", RowBox[{StyleBox[\"x\", \"TI\"], \",\", SubscriptBox[StyleBox[\"x\", \"TI\"], StyleBox[\"0\", \"TR\"]], \",\", StyleBox[\"n\", \"TI\"]}], \"}\"}]}], \"]\"}]\) generates a power series expansion for \!\(\*StyleBox[\"f\", \"TI\"]\) about the point \!\(\*RowBox[{StyleBox[\"x\", \"TI\"], \"=\", SubscriptBox[StyleBox[\"x\", \"TI\"], StyleBox[\"0\", \"TR\"]]}]\) to order \!\(\*SuperscriptBox[RowBox[{\"(\", RowBox[{StyleBox[\"x\", \"TI\"], \"-\", SubscriptBox[StyleBox[\"x\", \"TI\"], StyleBox[\"0\", \"TR\"]]}], \")\"}], StyleBox[\"n\", \"TI\"]]\), where \!\(\*StyleBox[\"n\", \"TI\"]\) is an explicit integer. \n\!\(\*RowBox[{\"Series\", \"[\", RowBox[{StyleBox[\"f\", \"TI\"], \",\", RowBox[{StyleBox[\"x\", \"TI\"], StyleBox[\"ï¢\", \"TI\"], SubscriptBox[StyleBox[\"x\", \"TI\"], StyleBox[\"0\", \"TR\"]]}]}], \"]\"}]\) generates the leading term of a power series expansion for \!\(\*StyleBox[\"f\", \"TI\"]\) about the point \!\(\*RowBox[{StyleBox[\"x\", \"TI\"], \"=\", SubscriptBox[StyleBox[\"x\", \"TI\"], StyleBox[\"0\", \"TR\"]]}]\). \n\!\(\*RowBox[{\"Series\", \"[\", RowBox[{StyleBox[\"f\", \"TI\"], \",\", RowBox[{\"{\", RowBox[{StyleBox[\"x\", \"TI\"], \",\", SubscriptBox[StyleBox[\"x\", \"TI\"], StyleBox[\"0\", \"TR\"]], \",\", SubscriptBox[StyleBox[\"n\", \"TI\"], StyleBox[\"x\", \"TI\"]]}], \"}\"}], \",\", RowBox[{\"{\", RowBox[{StyleBox[\"y\", \"TI\"], \",\", SubscriptBox[StyleBox[\"y\", \"TI\"], StyleBox[\"0\", \"TR\"]], \",\", SubscriptBox[StyleBox[\"n\", \"TI\"], StyleBox[\"y\", \"TI\"]]}], \"}\"}], \",\", StyleBox[\"â¦\", \"TR\"]}], \"]\"}]\) successively finds series expansions with respect to \!\(\*StyleBox[\"x\", \"TI\"]\), then \!\(\*StyleBox[\"y\", \"TI\"]\), etc. ", "Documentation" -> <|"Web" -> "http://reference.wolfram.com/language/ref/Series.html"|>, "OwnValues" -> None, "UpValues" -> None, "DownValues" -> None, "SubValues" -> None, "DefaultValues" -> None, "NValues" -> None, "FormatValues" -> None, "Options" -> {Analytic -> True, Assumptions :> $Assumptions, SeriesTermGoal -> Automatic}, "Attributes" -> {Protected}, "FullName" -> "System`Series"|>, False]
+-Rendered- aa782409bdf6 *)
+
+(* ::cell:: input *)
+Integrate[Sin[x]^2, {x, 0, Pi}]
+
+(* ::cell:: output *)
+(* Pi/2
+-Rendered- 15b293e022fd *)
