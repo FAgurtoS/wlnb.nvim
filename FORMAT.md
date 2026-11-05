@@ -1,4 +1,4 @@
-# .wlnb format (draft v0)
+# .wlnb format (v1)
 
 Plain text. A valid `.wl` file: every marker is a Wolfram comment.
 

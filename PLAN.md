@@ -9,7 +9,7 @@ Status marks: [ ] todo, [x] done.
 - [x] 2. lua/ipynb/wlnb.lua (parse/serialize) wired into io.lua + BufReadCmd/BufWriteCmd for *.wlnb; tests/test_wlnb.lua. Check: open+save roundtrip is byte-identical
 - [x] 3. tree-sitter-wolfram (WolframResearch, pinned 6a2754f) vendored in tree-sitter-wolfram/ with highlights from zed-wolfram-highlighter; registered in init.lua/highlight: wolfram injection for input cells (or reuse markers via cells.lua)
 - [x] 4. python/wolfram_bridge.py drives WolframKernel over pipes (stdlib only, same JSON protocol as kernel_bridge.py); kernel.lua picks it when kernelspec is wolframscript. Interrupt = kill + fresh kernel (state lost; a piped kernel dies on SIGINT). Start takes ~9 s. Original note: Wolfram Jupyter kernel via existing kernel_bridge.py. Check: 1+1 -> 2
-- [~] 5. (text part done: results saved as InputForm in the .wlnb; image PNG shown via execute_result image/png but not persisted yet) Outputs as InputForm (ToString[expr, InputForm]), stored in file, float to copy
+- [x] 5. Outputs as InputForm (ToString[expr, InputForm]), stored in file, float to copy
 - [x] 5b. Kernel control: interrupt, restart, shutdown (bridge must handle them; plugin already has :NotebookKernelInterrupt/Restart/Shutdown + keymaps). Restart marks all outputs [stale]. Check: infinite loop is interrupted; after restart, x is undefined
 - [x] 6. Plots -> PNG via images.lua; TeXForm optional
 - [x] 7a. .wln <-> .wlnb converter (text and legacy flavours; .nb still open)
